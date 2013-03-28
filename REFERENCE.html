@@ -77,7 +77,7 @@ install the Sass gem:</p>
 <pre class="code">engine = Sass::Engine.new("#main {background-color: #0000ff}", :syntax =&gt; :scss)
 engine.render #=&gt; "#main { background-color: #0000ff; }\n"</pre>
 
-<h3 id="rackrailsmerb_plugin">Rack/Rails/Merb Plugin</h3>
+<h2 id="rackrailsmerb_plugin">Rack/Rails/Merb Plugin</h2>
 
 <p>To enable Sass in Rails versions before Rails 3, add the following line to <code>environment.rb</code>:</p>
 
@@ -106,7 +106,7 @@ CSS files in public/stylesheets. For instance,
 public/stylesheets/sass/main.scss would be compiled to 
 public/stylesheets/main.css.</p>
 
-<h3 id="caching">Caching</h3>
+<h2 id="caching">Caching</h2>
 
 <p>By default, Sass caches compiled templates and <a href="#partials">partials</a>.
  This dramatically speeds up re-compilation of large collections of Sass
@@ -115,7 +115,7 @@ files that are all <a href="#import"><code>@import</code></a>ed into one large f
 
 <p>Without a framework, Sass puts the cached templates in the <code>.sass-cache</code> directory. In Rails and Merb, they go in <code>tmp/sass-cache</code>. The directory can be customized with the <a href="#cache_location-option"><code>:cache_location</code></a> option. If you don&#8217;t want Sass to use caching at all, set the <a href="#cache-option"><code>:cache</code></a> option to <code>false</code>.</p>
 
-<h3 id="options">Options</h3>
+<h2 id="options">Options</h2>
 
 <p>Options can be set by setting the <tt><a href="http://sass-lang.com/docs/yardoc/Sass/Plugin/Configuration.html#options-instance_method" title="Sass::Plugin::Configuration#options (method)">Sass::Plugin#options</a></tt> hash in <code>environment.rb</code> in Rails or <code>config.ru</code> in Rack&#8230;</p>
 
@@ -263,12 +263,12 @@ understood by the browser. Useful in conjunction with <a href="https://addons.mo
 <dd>When set to true, causes warnings to be disabled.</dd>
 </dl>
 
-<h3 id="syntax_selection">Syntax Selection</h3>
+<h2 id="syntax_selection">Syntax Selection</h2>
 
 <p>The Sass command-line tool will use the file extension to determine 
 which syntax you are using, but there&#8217;s not always a filename. The <code>sass</code> command-line program defaults to the indented syntax but you can pass the <code>--scss</code> option to it if the input should be interpreted as SCSS syntax. Alternatively, you can use the <code>scss</code> command-line program which is exactly like the <code>sass</code> program but it defaults to assuming the syntax is SCSS.</p>
 
-<h3 id="encodings">Encodings</h3>
+<h2 id="encodings">Encodings</h2>
 
 <p>When running on Ruby 1.9 and later, Sass is aware of the character 
 encoding of documents. By default, Sass assumes that all stylesheets are
@@ -297,7 +297,7 @@ first <code>@charset</code> declaration in the stylesheet or any of the other st
 
 <h1 id="css_extensions">CSS Extensions</h1>
 
-<h3 id="nested_rules">Nested Rules</h3>
+<h2 id="nested_rules">Nested Rules</h2>
 
 <p>Sass allows CSS rules to be nested within one another. The inner rule
  then only applies within the outer rule&#8217;s selector. For example:</p>
@@ -346,7 +346,7 @@ CSS layouts with lots of nested selectors much simpler. For example:</p>
   #main pre {
     font-size: 3em; }</pre>
 
-<h3 id="referencing_parent_selectors_">Referencing Parent Selectors: <code>&amp;</code></h3>
+<h2 id="referencing_parent_selectors_">Referencing Parent Selectors: <code>&amp;</code></h2>
 
 <p>Sometimes it&#8217;s useful to use a nested rule&#8217;s parent selector in other
  ways than the default. For instance, you might want to have special 
@@ -392,7 +392,7 @@ the parent selector will be fully resolved before the <code>&amp;</code> is repl
     #main a:hover {
       color: red; }</pre>
 
-<h3 id="nested_properties">Nested Properties</h3>
+<h2 id="nested_properties">Nested Properties</h2>
 
 <p>CSS has quite a few properties that are in &#8220;namespaces;&#8221; for instance, <code>font-family</code>, <code>font-size</code>, and <code>font-weight</code> are all in the <code>font</code>
  namespace. In CSS, if you want to set a bunch of properties in the same
@@ -433,7 +433,7 @@ sub-properties within it. For example:</p>
     font-size: 30em;
     font-weight: bold; }</pre>
 
-<h3 id="placeholder_selectors_">Placeholder Selectors: <code>%foo</code></h3>
+<h2 id="placeholder_selectors_">Placeholder Selectors: <code>%foo</code></h2>
 
 <p>Sass supports a special type of selector called a &#8220;placeholder selector&#8221;. These look like class and id selectors, except the <code>#</code> or <code>.</code> is replaced by <code>%</code>. They&#8217;re meant to be used with the <a href="#extend"><code>@extend</code> directive</a>; for more information see <a href="#placeholders"><code>@extend</code>-Only Selectors</a>.</p>
 
@@ -482,7 +482,7 @@ any property value.</p>
 
 <p>SassScript can also be used to generate selectors and property names, which is useful when writing <a href="#mixins">mixins</a>. This is done via <a href="#interpolation_">interpolation</a>.</p>
 
-<h3 id="interactive_shell">Interactive Shell</h3>
+<h2 id="interactive_shell">Interactive Shell</h2>
 
 <p>You can easily experiment with SassScript using the interactive shell. To launch the shell run the sass command-line with the <code>-i</code> option. At the prompt, enter any legal SassScript expression to have it evaluated and the result printed out for you:</p>
 
@@ -496,7 +496,7 @@ any property value.</p>
 &gt;&gt; #777 + #888
 white</pre>
 
-<h3 id="variables_">Variables: <code>$</code></h3>
+<h2 id="variables_">Variables: <code>$</code></h2>
 
 <p>The most straightforward way to use SassScript is to use variables. 
 Variables begin with dollar signs, and are set like CSS properties:</p>
@@ -517,7 +517,7 @@ selectors, they&#8217;re available everywhere.</p>
 
 <p>Variables also used to be defined with <code>=</code> rather than <code>:</code>; this still works, but it&#8217;s deprecated and prints a warning. <code>:</code> is the recommended syntax.</p>
 
-<h3 id="data_types">Data Types</h3>
+<h2 id="data_types">Data Types</h2>
 
 <p>SassScript supports six main data types:</p>
 
@@ -582,7 +582,7 @@ second is a list containing four numbers.</p>
 
 <p>Lists can also have no items in them at all. These lists are represented as <code>()</code>. They can&#8217;t be output directly to CSS; if you try to do e.g. <code>font-family: ()</code>, Sass will raise an error. If a list contains empty lists or null values, as in <code>1px 2px () 3px</code> or <code>1px 2px null 3px</code>, the empty lists and null values will be removed before the containing list is turned into CSS.</p>
 
-<h3 id="operations">Operations</h3>
+<h2 id="operations">Operations</h2>
 
 <p>All types support equality operations (<code>==</code> and <code>!=</code>). In addition, each type has its own operations that it has special support for.</p>
 
@@ -790,7 +790,7 @@ p:before {
 
 <p>Lists don&#8217;t support any special operations. Instead, they&#8217;re manipulated using the <a href="http://sass-lang.com/docs/yardoc/Sass/Script/Functions.html#list-functions">list functions</a>.</p>
 
-<h3 id="parentheses">Parentheses</h3>
+<h2 id="parentheses">Parentheses</h2>
 
 <p>Parentheses can be used to affect the order of operations:</p>
 
@@ -803,7 +803,7 @@ p:before {
 <pre class="code">p {
   width: 7em; }</pre>
 
-<h3 id="functions">Functions</h3>
+<h2 id="functions">Functions</h2>
 
 <p>SassScript defines some useful functions that are called using the normal CSS function syntax:</p>
 
@@ -834,7 +834,7 @@ names, underscores and dashes can be used interchangeably.</p>
 
 <p>See <tt><a href="http://sass-lang.com/docs/yardoc/Sass/Script/Functions.html" title="Sass::Script::Functions (module)">Sass::Script::Functions</a></tt> for a full listing of Sass functions and their argument names, as well as instructions on defining your own in Ruby.</p>
 
-<h3 id="interpolation_">Interpolation: <code>#{}</code></h3>
+<h2 id="interpolation_">Interpolation: <code>#{}</code></h2>
 
 <p>You can also use SassScript variables in selectors and property names using #{} interpolation syntax:</p>
 
@@ -862,7 +862,7 @@ p.#{$name} {
 <pre class="code">p {
   font: 12px/30px; }</pre>
 
-<h3 id="variable_defaults_">Variable Defaults: <code>!default</code></h3>
+<h2 id="variable_defaults_">Variable Defaults: <code>!default</code></h2>
 
 <p>You can assign to variables if they aren&#8217;t already assigned by adding the <code>!default</code>
  flag to the end of the value. This means that if the variable has 
@@ -906,7 +906,7 @@ $content: "Non-null content" !default;
 additional Sass-specific ones known as &#8220;directives.&#8221; These have various 
 effects in Sass, detailed below. See also <a href="#control_directives">control directives</a> and <a href="#mixins">mixin directives</a>.</p>
 
-<h3 id="import"><code>@import</code></h3>
+<h2 id="import"><code>@import</code></h2>
 
 <p>Sass extends the CSS <code>@import</code> rule to allow it to import 
 SCSS and Sass files. All imported SCSS and Sass files will be merged 
@@ -1016,7 +1016,7 @@ underscore.</p>
 
 <p>It&#8217;s not possible to nest <code>@import</code> within mixins or control directives.</p>
 
-<h3 id="media"><code>@media</code></h3>
+<h2 id="media"><code>@media</code></h2>
 
 <p><code>@media</code> directives in Sass behave just like they do in plain CSS, with one extra capability: they can be nested in CSS rules. If a <code>@media</code>
  directive appears within a CSS rule, it will be bubbled up to the top 
@@ -1075,7 +1075,7 @@ $value: 1.5;
   .sidebar {
     width: 500px; } }</pre>
 
-<h3 id="extend"><code>@extend</code></h3>
+<h2 id="extend"><code>@extend</code></h2>
 
 <p>There are often cases when designing a page when one class should 
 have all the styles of another class, as well as its own specific 
@@ -1421,7 +1421,7 @@ if you use <code>@extend</code> within <code>@media</code> (or other CSS directi
 
 <p>Someday we hope to have <code>@extend</code> supported natively in the browser, which will allow it to be used within <code>@media</code> and other directives.</p>
 
-<h3 id="id8"><code>@debug</code></h3>
+<h2 id="id8"><code>@debug</code></h2>
 
 <p>The <code>@debug</code> directive prints the value of a SassScript 
 expression to the standard error output stream. It&#8217;s useful for 
@@ -1434,7 +1434,7 @@ example:</p>
 
 <pre class="code">Line 1 DEBUG: 22em</pre>
 
-<h3 id="id9"><code>@warn</code></h3>
+<h2 id="id9"><code>@warn</code></h2>
 
 <p>The <code>@warn</code> directive prints the value of a SassScript 
 expression to the standard error output stream. It&#8217;s useful for 
@@ -1471,7 +1471,7 @@ with variations.</p>
 
 <p><strong>Note that control directives are an advanced feature, and are not recommended in the course of day-to-day styling</strong>. They exist mainly for use in <a href="#mixins">mixins</a>, particularly those that are part of libraries like <a href="http://compass-style.org/">Compass</a>, and so require substantial flexibility.</p>
 
-<h3 id="id10"><code>@if</code></h3>
+<h2 id="id10"><code>@if</code></h2>
 
 <p>The <code>@if</code> directive takes a SassScript expression and uses the styles nested beneath it if the expression returns anything other than <code>false</code> or <code>null</code>:</p>
 
@@ -1506,7 +1506,7 @@ p {
 <pre class="code">p {
   color: green; }</pre>
 
-<h3 id="id11"><code>@for</code></h3>
+<h2 id="id11"><code>@for</code></h2>
 
 <p>The <code>@for</code> directive repeatedly outputs a set of styles. 
 For each repetition, a counter variable is used to adjust the output. 
@@ -1527,7 +1527,7 @@ The directive has two forms: <code>@for $var from &lt;start&gt; through &lt;end&
 .item-3 {
   width: 6em; }</pre>
 
-<h3 id="each-directive"><code>@each</code></h3>
+<h2 id="each-directive"><code>@each</code></h2>
 
 <p>The <code>@each</code> rule has the form <code>@each $var in &lt;list&gt;</code>. <code>$var</code> can be any variable name, like <code>$length</code> or <code>$name</code>, and <code>&lt;list&gt;</code> is a SassScript expression that returns a list.</p>
 
@@ -1550,7 +1550,7 @@ The directive has two forms: <code>@for $var from &lt;start&gt; through &lt;end&
 .salamander-icon {
   background-image: url('/images/salamander.png'); }</pre>
 
-<h3 id="id13"><code>@while</code></h3>
+<h2 id="id13"><code>@while</code></h2>
 
 <p>The <code>@while</code> directive takes a SassScript expression and repeatedly outputs the nested styles until the statement evaluates to <code>false</code>. This can be used to achieve more complex looping than the <code>@for</code> statement is capable of, although this is rarely necessary. For example:</p>
 
@@ -1576,7 +1576,7 @@ The directive has two forms: <code>@for $var from &lt;start&gt; through &lt;end&
 <p>Mixins allow you to define styles that can be re-used throughout the 
 stylesheet without needing to resort to non-semantic classes like <code>.float-left</code>. Mixins can also contain full CSS rules, and anything else allowed elsewhere in a Sass document. They can even take <a href="#mixin-arguments">arguments</a> which allows you to produce a wide variety of styles with very few mixins.</p>
 
-<h3 id="defining_a_mixin">Defining a Mixin: <code>@mixin</code></h3>
+<h2 id="defining_a_mixin">Defining a Mixin: <code>@mixin</code></h2>
 
 <p>Mixins are defined with the <code>@mixin</code> directive. It&#8217;s followed by the name of the mixin and optionally the <a href="#mixin-arguments">arguments</a>, and a block containing the contents of the mixin. For example, the <code>large-text</code> mixin is defined as follows:</p>
 
@@ -1603,7 +1603,7 @@ stylesheet without needing to resort to non-semantic classes like <code>.float-l
   * html &amp; { height: 1px }
 }</pre>
 
-<h3 id="including_a_mixin">Including a Mixin: <code>@include</code></h3>
+<h2 id="including_a_mixin">Including a Mixin: <code>@include</code></h2>
 
 <p>Mixins are included in the document with the <code>@include</code> directive. This takes the name of a mixin and optionally <a href="#mixin-arguments">arguments to pass to it</a>, and includes the styles defined by that mixin into the current rule. For example:</p>
 
@@ -1654,7 +1654,7 @@ or use any parent references. For example:</p>
 
 <p>Mixins that only define descendent selectors, can be safely mixed into the top most level of a document.</p>
 
-<h3 id="mixin-arguments">Arguments</h3>
+<h2 id="mixin-arguments">Arguments</h2>
 
 <p>Mixins can take arguments SassScript values as arguments, which are 
 given when the mixin is included and made available within the mixin as 
@@ -1788,7 +1788,7 @@ so, even keyword arguments will get passed through to the wrapped mixin.
   @include wrapped-stylish-mixin(#00ff00, $width: 100px);
 }</pre>
 
-<h3 id="mixin-content">Passing Content Blocks to a Mixin</h3>
+<h2 id="mixin-content">Passing Content Blocks to a Mixin</h2>
 
 <p>It is possible to pass a block of styles to the mixin for placement 
 within the styles included by the mixin. The styles will appear at the 
@@ -1906,7 +1906,7 @@ Sass supports several other styles.</p>
 
 <p>Sass allows you to choose between four different output styles by setting the <a href="#style-option"><code>:style</code> option</a> or using the <code>--style</code> command-line flag.</p>
 
-<h3 id="id14"><code>:nested</code></h3>
+<h2 id="id14"><code>:nested</code></h2>
 
 <p>Nested style is the default Sass style, because it reflects the 
 structure of the CSS styles and the HTML document they&#8217;re styling. Each 
@@ -1928,7 +1928,7 @@ property has its own line, but the indentation isn&#8217;t constant. Each rule
 allows you to easily grasp the structure of the file without actually 
 reading anything.</p>
 
-<h3 id="id15"><code>:expanded</code></h3>
+<h2 id="id15"><code>:expanded</code></h2>
 
 <p>Expanded is a more typical human-made CSS style, with each property 
 and rule taking up one line. Properties are indented within the rules, 
@@ -1948,7 +1948,7 @@ but the rules aren&#8217;t indented in any special way. For example:</p>
   text-decoration: underline;
 }</pre>
 
-<h3 id="id16"><code>:compact</code></h3>
+<h2 id="id16"><code>:compact</code></h2>
 
 <p>Compact style takes up less space than Nested or Expanded. It also 
 draws the focus more to the selectors than to their properties. Each CSS
@@ -1961,7 +1961,7 @@ separate groups of rules have newlines between them. For example:</p>
 
 .huge { font-size: 10em; font-weight: bold; text-decoration: underline; }</pre>
 
-<h3 id="id17"><code>:compressed</code></h3>
+<h2 id="id17"><code>:compressed</code></h2>
 
 <p>Compressed style takes up the minimum amount of space possible, 
 having no whitespace except that necessary to separate selectors and a 
@@ -1977,11 +1977,11 @@ It&#8217;s not meant to be human-readable. For example:</p>
 unique requirements. Using these features requires a strong 
 understanding of Ruby.</p>
 
-<h3 id="defining_custom_sass_functions">Defining Custom Sass Functions</h3>
+<h2 id="defining_custom_sass_functions">Defining Custom Sass Functions</h2>
 
 <p>Users can define their own Sass functions using the Ruby API. For more information, see the <a href="http://sass-lang.com/docs/yardoc/Sass/Script/Functions.html#adding_custom_functions">source documentation</a>.</p>
 
-<h3 id="cache_stores">Cache Stores</h3>
+<h2 id="cache_stores">Cache Stores</h2>
 
 <p>Sass caches parsed documents so that they can be reused without 
 parsing them again unless they have changed. By default, Sass will write
@@ -1990,7 +1990,7 @@ parsing them again unless they have changed. By default, Sass will write
 ruby processes or machines, then you can define your own cache store and
  set the<a href="#cache_store-option"><code>:cache_store</code> option</a>. For details on creating your own cache store, please see the <tt><a href="http://sass-lang.com/docs/yardoc/Sass/CacheStores/Base.html" title="Sass::CacheStores::Base (class)">source documentation</a></tt>.</p>
 
-<h3 id="custom_importers">Custom Importers</h3>
+<h2 id="custom_importers">Custom Importers</h2>
 
 <p>Sass importers are in charge of taking paths passed to <code>@import</code> and finding the appropriate Sass code for those paths. By default, this code is loaded from the <tt><a href="http://sass-lang.com/docs/yardoc/Sass/Importers/Filesystem.html" title="Sass::Importers::Filesystem (class)">filesystem</a></tt>, but importers could be added to load from a database, over HTTP, or use a different file naming scheme than what Sass expects.</p>
 
