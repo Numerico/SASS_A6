@@ -1,47 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"><head>
-<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
-    <meta name="Content-Type" content="text/html; charset=UTF-8">
-<title>File: SASS_REFERENCE</title>
-<link rel="stylesheet" href="REFERENCE_archivos/style.css" type="text/css" media="screen" charset="utf-8">
-<link rel="stylesheet" href="REFERENCE_archivos/common.css" type="text/css" media="screen" charset="utf-8">
-
-<script type="text/javascript" charset="utf-8">
-  relpath = '';
-  if (relpath != '') relpath += '/';
-</script>
-<script type="text/javascript" charset="utf-8" src="REFERENCE_archivos/jquery.js"></script>
-<script type="text/javascript" charset="utf-8" src="REFERENCE_archivos/app.js"></script>
-
-  </head>
-  <body>
-    <script type="text/javascript" charset="utf-8">
-      if (window.top.frames.main) document.body.className = 'frames';
-    </script>
-    
-    <div id="header">
-      <div id="menu">
-  
-    <a href="http://sass-lang.com/docs/yardoc/_index.html" title="Index">Index</a> » 
-    <span class="title">File: SASS_REFERENCE</span>
-  
-  
-  <div class="noframes"><span class="title">(</span><a href="http://sass-lang.com/docs/yardoc/" target="_top">no frames</a><span class="title">)</span></div>
-</div>
-
-      <div id="search">
-  <a id="class_list_link" href="#">Class List</a>
-  <a id="method_list_link" href="#">Method List</a>
-  <a id="file_list_link" href="#">File List</a>
-</div>
-
-      <div class="clear"></div>
-    </div>
-    
-    <iframe id="search_frame"></iframe>
-    
-    <div id="content"><div id="filecontents"><h1 id="sass_syntactically_awesome_stylesheets">Sass (Syntactically Awesome StyleSheets)</h1>
-<div class="maruku_toc"><ul style="list-style: none;"><li><a href="#features">Features</a></li><li><a href="#syntax">Syntax</a></li><li><a href="#using_sass">Using Sass</a><ul style="list-style: none;"><li><a href="#rackrailsmerb_plugin">Rack/Rails/Merb Plugin</a></li><li><a href="#caching">Caching</a></li><li><a href="#options">Options</a></li><li><a href="#syntax_selection">Syntax Selection</a></li><li><a href="#encodings">Encodings</a><ul style="list-style: none;"><li><a href="#output_encoding">Output Encoding</a></li></ul></li></ul></li><li><a href="#css_extensions">CSS Extensions</a><ul style="list-style: none;"><li><a href="#nested_rules">Nested Rules</a></li><li><a href="#referencing_parent_selectors_">Referencing Parent Selectors: <code>&amp;</code></a></li><li><a href="#nested_properties">Nested Properties</a></li><li><a href="#placeholder_selectors_">Placeholder Selectors: <code>%foo</code></a></li></ul></li><li><a href="#comments">Comments: <code>/* */</code> and <code>//</code></a></li><li><a href="#sassscript">SassScript</a><ul style="list-style: none;"><li><a href="#interactive_shell">Interactive Shell</a></li><li><a href="#variables_">Variables: <code>$</code></a></li><li><a href="#data_types">Data Types</a><ul style="list-style: none;"><li><a href="#sass-script-strings">Strings</a></li><li><a href="#lists">Lists</a></li></ul></li><li><a href="#operations">Operations</a><ul style="list-style: none;"><li><a href="#number_operations">Number Operations</a><ul style="list-style: none;"><li><a href="#division-and-slash">Division and <code>/</code></a></li></ul></li><li><a href="#color_operations">Color Operations</a></li><li><a href="#string_operations">String Operations</a></li><li><a href="#boolean_operations">Boolean Operations</a></li><li><a href="#list_operations">List Operations</a></li></ul></li><li><a href="#parentheses">Parentheses</a></li><li><a href="#functions">Functions</a><ul style="list-style: none;"><li><a href="#keyword_arguments">Keyword Arguments</a></li></ul></li><li><a href="#interpolation_">Interpolation: <code>#{}</code></a></li><li><a href="#variable_defaults_">Variable Defaults: <code>!default</code></a></li></ul></li><li><a href="#directives"><code>@</code>-Rules and Directives</a><ul style="list-style: none;"><li><a href="#import"><code>@import</code></a><ul style="list-style: none;"><li><a href="#partials">Partials</a></li><li><a href="#nested-import">Nested <code>@import</code></a></li></ul></li><li><a href="#media"><code>@media</code></a></li><li><a href="#extend"><code>@extend</code></a><ul style="list-style: none;"><li><a href="#how_it_works">How it Works</a></li><li><a href="#extending_complex_selectors">Extending Complex Selectors</a></li><li><a href="#multiple_extends">Multiple Extends</a></li><li><a href="#chaining_extends">Chaining Extends</a></li><li><a href="#selector_sequences">Selector Sequences</a><ul style="list-style: none;"><li><a href="#merging_selector_sequences">Merging Selector Sequences</a></li></ul></li><li><a href="#placeholders"><code>@extend</code>-Only Selectors</a></li><li><a href="#the__flag">The <code>!optional</code> Flag</a></li><li><a href="#_in_directives"><code>@extend</code> in Directives</a></li></ul></li><li><a href="#id8"><code>@debug</code></a></li><li><a href="#id9"><code>@warn</code></a></li></ul></li><li><a href="#control_directives">Control Directives</a><ul style="list-style: none;"><li><a href="#id10"><code>@if</code></a></li><li><a href="#id11"><code>@for</code></a></li><li><a href="#each-directive"><code>@each</code></a></li><li><a href="#id13"><code>@while</code></a></li></ul></li><li><a href="#mixins">Mixin Directives</a><ul style="list-style: none;"><li><a href="#defining_a_mixin">Defining a Mixin: <code>@mixin</code></a></li><li><a href="#including_a_mixin">Including a Mixin: <code>@include</code></a></li><li><a href="#mixin-arguments">Arguments</a><ul style="list-style: none;"><li><a href="#keyword_arguments">Keyword Arguments</a></li><li><a href="#variable_arguments">Variable Arguments</a></li></ul></li><li><a href="#mixin-content">Passing Content Blocks to a Mixin</a><ul style="list-style: none;"><li><a href="#variable_scope_and_content_blocks">Variable Scope and Content Blocks</a></li></ul></li></ul></li><li><a href="#function_directives">Function Directives</a></li><li><a href="#output_style">Output Style</a><ul style="list-style: none;"><li><a href="#id14"><code>:nested</code></a></li><li><a href="#id15"><code>:expanded</code></a></li><li><a href="#id16"><code>:compact</code></a></li><li><a href="#id17"><code>:compressed</code></a></li></ul></li><li><a href="#extending_sass">Extending Sass</a><ul style="list-style: none;"><li><a href="#defining_custom_sass_functions">Defining Custom Sass Functions</a></li><li><a href="#cache_stores">Cache Stores</a></li><li><a href="#custom_importers">Custom Importers</a></li></ul></li></ul></div>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>SASS REFERENCE</title>
 <p>Sass is an extension of CSS that adds power and elegance to the basic language. It allows you to use <a href="#variables_">variables</a>, <a href="#nested_rules">nested rules</a>, <a href="#mixins">mixins</a>, <a href="#import">inline imports</a>,
  and more, all with a fully CSS-compatible syntax. Sass helps keep large
  stylesheets well-organized, and get small stylesheets up and running 
