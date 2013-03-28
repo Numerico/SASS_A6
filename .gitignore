@@ -1,0 +1,10 @@
+*.aux
+*~
+*.log
+*.out
+*.pdf
+*.png
+*.old
+*.toc
+haml_archivos/
+tutorial_archivos/
