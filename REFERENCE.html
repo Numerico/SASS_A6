@@ -282,7 +282,7 @@ encoding you use, it must be convertible to Unicode.</p>
 
 <p>Sass will also respect any Unicode BOMs and non-ASCII-compatible Unicode encodings <a href="http://www.w3.org/TR/CSS2/syndata.html#charset">as specified by the CSS spec</a>, although this is <em>not</em> the recommended way to specify the character set for a document. Note that Sass does not support the obscure <code>UTF-32-2143</code>, <code>UTF-32-3412</code>, <code>EBCDIC</code>, <code>IBM1026</code>, and <code>GSM 03.38</code> encodings, since Ruby does not have support for them and they&#8217;re highly unlikely to ever be used in practice.</p>
 
-<h4 id="output_encoding">Output Encoding</h4>
+<h3 id="output_encoding">Output Encoding</h3>
 
 <p>In general, Sass will try to encode the output stylesheet using the 
 same encoding as the input stylesheet. In order for it to do this, 
@@ -537,7 +537,7 @@ selectors, they&#8217;re available everywhere.</p>
 
 <p>SassScript also supports all other types of CSS property value, such as Unicode ranges and <code>!important</code> declarations. However, it has no special handling for these types. They&#8217;re treated just like unquoted strings.</p>
 
-<h4 id="sass-script-strings">Strings</h4>
+<h3 id="sass-script-strings">Strings</h3>
 
 <p>CSS specifies two kinds of strings: those with quotes, such as <code>"Lucida Grande"</code> or <code>'http://sass-lang.com'</code>, and those without quotes, such as <code>sans-serif</code> or <code>bold</code>.
  SassScript recognizes both kinds, and in general if one kind of string 
@@ -561,7 +561,7 @@ resulting CSS.</p>
 
 <p>It&#8217;s also worth noting that when using the <a href="#sassscript">deprecated <code>=</code> property syntax</a>, all strings are interpreted as unquoted, regardless of whether or not they&#8217;re written with quotes.</p>
 
-<h4 id="lists">Lists</h4>
+<h3 id="lists">Lists</h3>
 
 <p>Lists are how Sass represents the values of CSS declarations like <code>margin: 10px 15px 0 0</code> or <code>font-face: Helvetica, Arial, sans-serif</code>.
  Lists are just a series of other values, separated by either spaces or 
@@ -586,7 +586,7 @@ second is a list containing four numbers.</p>
 
 <p>All types support equality operations (<code>==</code> and <code>!=</code>). In addition, each type has its own operations that it has special support for.</p>
 
-<h4 id="number_operations">Number Operations</h4>
+<h3 id="number_operations">Number Operations</h3>
 
 <p>SassScript supports the standard arithmetic operations on numbers (<code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, <code>%</code>), and will automatically convert between units if it can:</p>
 
@@ -601,7 +601,7 @@ second is a list containing four numbers.</p>
 
 <p>Relational operators (<code>&lt;</code>, <code>&gt;</code>, <code>&lt;=</code>, <code>&gt;=</code>) are also supported for numbers, and equality operators (<code>==</code>, <code>!=</code>) are supported for all types.</p>
 
-<h5 id="division-and-slash">Division and <code>/</code></h5>
+<h4 id="division-and-slash">Division and <code>/</code></h4>
 
 <p>CSS allows <code>/</code> to appear in property values as a way of 
 separating numbers. Since SassScript is an extension of the CSS property
@@ -648,7 +648,7 @@ separating numbers. Since SassScript is an extension of the CSS property
 <pre class="code">p {
   font: 12px/30px; }</pre>
 
-<h4 id="color_operations">Color Operations</h4>
+<h3 id="color_operations">Color Operations</h3>
 
 <p>All arithmetic operations are supported for color values, where they 
 work piecewise. This means that the operation is performed on the red, 
@@ -720,7 +720,7 @@ div {
   filter: progid:DXImageTransform.Microsoft.gradient(enabled='false', startColorstr=#FF00FF00, endColorstr=#80FF0000);
 }</pre>
 
-<h4 id="string_operations">String Operations</h4>
+<h3 id="string_operations">String Operations</h3>
 
 <p>The <code>+</code> operation can be used to concatenate strings:</p>
 
@@ -782,11 +782,11 @@ p:before {
 <pre class="code">p:before {
   content: "I ate  pies!"; }</pre>
 
-<h4 id="boolean_operations">Boolean Operations</h4>
+<h3 id="boolean_operations">Boolean Operations</h3>
 
 <p>SassScript supports <code>and</code>, <code>or</code>, and <code>not</code> operators for boolean values.</p>
 
-<h4 id="list_operations">List Operations</h4>
+<h3 id="list_operations">List Operations</h3>
 
 <p>Lists don&#8217;t support any special operations. Instead, they&#8217;re manipulated using the <a href="http://sass-lang.com/docs/yardoc/Sass/Script/Functions.html#list-functions">list functions</a>.</p>
 
@@ -816,7 +816,7 @@ p:before {
 <pre class="code">p {
   color: #ff0000; }</pre>
 
-<h4 id="keyword_arguments">Keyword Arguments</h4>
+<h3 id="keyword_arguments">Keyword Arguments</h3>
 
 <p>Sass functions can also be called using explicit keyword arguments. The above example can also be written as:</p>
 
@@ -974,7 +974,7 @@ such, it only works with <code>url()</code> imports. For example:</p>
 
 <pre class="code">@import url("http://fonts.googleapis.com/css?family=Droid+Sans");</pre>
 
-<h4 id="partials">Partials</h4>
+<h3 id="partials">Partials</h3>
 
 <p>If you have a SCSS or Sass file that you want to import but don&#8217;t 
 want to compile to a CSS file, you can add an underscore to the 
@@ -990,7 +990,7 @@ underscore.</p>
 
 <p>Note that you may not include a partial and a non-partial with the same name in the same directory. For example, <code>_colors.scss</code> may not exist alongside <code>colors.scss</code>.</p>
 
-<h4 id="nested-import">Nested <code>@import</code></h4>
+<h3 id="nested-import">Nested <code>@import</code></h3>
 
 <p>Although most of the time it&#8217;s most useful to just have <code>@import</code>s at the top level of the document, it is possible to include them within CSS rules and <code>@media</code> rules. Like a base-level <code>@import</code>, this includes the contents of the <code>@import</code>ed file. However, the imported rules will be nested in the same place as the original <code>@import</code>.</p>
 
@@ -1121,7 +1121,7 @@ error. We might write our markup like so:</p>
 
 <p>Then <code>&lt;div class="seriousError intrusion"&gt;</code> will have the <code>hacked.png</code> background image as well.</p>
 
-<h4 id="how_it_works">How it Works</h4>
+<h3 id="how_it_works">How it Works</h3>
 
 <p><code>@extend</code> works by inserting the extending selector (e.g. <code>.seriousError</code>) anywhere in the stylesheet that the extended selector (.e.g <code>.error</code>) appears. Thus the example above:</p>
 
@@ -1151,7 +1151,7 @@ error. We might write our markup like so:</p>
 
 <p>When merging selectors, <code>@extend</code> is smart enough to avoid unnecessary duplication, so something like <code>.seriousError.seriousError</code> gets translated to <code>.seriousError</code>. In addition, it won&#8217;t produce selectors that can&#8217;t match anything, like <code>#main#footer</code>.</p>
 
-<h4 id="extending_complex_selectors">Extending Complex Selectors</h4>
+<h3 id="extending_complex_selectors">Extending Complex Selectors</h3>
 
 <p>Class selectors aren&#8217;t the only things that can be extended. It&#8217;s 
 possible to extend any selector involving only a single element, such as
@@ -1189,7 +1189,7 @@ a:hover {
 <pre class="code">.comment a.user:hover, .comment .user.hoverlink {
   font-weight: bold; }</pre>
 
-<h4 id="multiple_extends">Multiple Extends</h4>
+<h3 id="multiple_extends">Multiple Extends</h3>
 
 <p>A single selector can extend more than one selector. This means that 
 it inherits the styles of all the extended selectors. For example:</p>
@@ -1225,7 +1225,7 @@ it inherits the styles of all the extended selectors. For example:</p>
 
 <p>Multiple extends can also be written using a comma-separated list of selectors. For example, <code>@extend .error, .attention</code> is the same as <code>@extend .error; @extend.attention</code>.</p>
 
-<h4 id="chaining_extends">Chaining Extends</h4>
+<h3 id="chaining_extends">Chaining Extends</h3>
 
 <p>It&#8217;s possible for one selector to extend another selector that in turn extends a third. For example:</p>
 
@@ -1262,7 +1262,7 @@ it inherits the styles of all the extended selectors. For example:</p>
   left: 10%;
   right: 10%; }</pre>
 
-<h4 id="selector_sequences">Selector Sequences</h4>
+<h3 id="selector_sequences">Selector Sequences</h3>
 
 <p>Selector sequences, such as <code>.foo .bar</code> or <code>.foo + .bar</code>, currently can&#8217;t be extended. However, it is possible for nested selectors themselves to use <code>@extend</code>. For example:</p>
 
@@ -1284,7 +1284,7 @@ a {
   a:hover, #fake-links .link:hover {
     text-decoration: underline; }</pre>
 
-<h5 id="merging_selector_sequences">Merging Selector Sequences</h5>
+<h4 id="merging_selector_sequences">Merging Selector Sequences</h4>
 
 <p>Sometimes a selector sequence extends another selector that appears 
 in another sequence. In this case, the two sequences need to be merged. 
@@ -1339,7 +1339,7 @@ will alternate. In this example, both sequences contain the id <code>#admin</cod
 #admin .overview .tabbar .fakelink {
   font-weight: bold; }</pre>
 
-<h4 id="placeholders"><code>@extend</code>-Only Selectors</h4>
+<h3 id="placeholders"><code>@extend</code>-Only Selectors</h3>
 
 <p>Sometimes you&#8217;ll write styles for a class that you only ever want to <code>@extend</code>,
  and never want to use directly in your HTML. This is especially true 
@@ -1374,7 +1374,7 @@ colliding with other classes that are being used in the HTML. That&#8217;s why
   font-weight: bold;
   font-size: 2em; }</pre>
 
-<h4 id="the__flag">The <code>!optional</code> Flag</h4>
+<h3 id="the__flag">The <code>!optional</code> Flag</h3>
 
 <p>Normally when you extend a selector, it&#8217;s an error if that <code>@extend</code> doesn&#8217;t work. For example, if you write <code>a.important {@extend .notice}</code>, it&#8217;s an error if there are no selectors that contain <code>.notice</code>. It&#8217;s also an error if the only selector containing <code>.notice</code> is <code>h1.notice</code>, since <code>h1</code> conflicts with <code>a</code> and so no new selector would be generated.</p>
 
@@ -1384,7 +1384,7 @@ colliding with other classes that are being used in the HTML. That&#8217;s why
   @extend .notice !optional;
 }</pre>
 
-<h4 id="_in_directives"><code>@extend</code> in Directives</h4>
+<h3 id="_in_directives"><code>@extend</code> in Directives</h3>
 
 <p>There are some restrictions on the use of <code>@extend</code> within directives such as <code>@media</code>. Sass is unable to make CSS rules outside of the <code>@media</code>
  block apply to selectors inside it without creating a huge amount of 
@@ -1709,7 +1709,7 @@ h1 {
   border-width: 2in;
   border-style: dashed; }</pre>
 
-<h4 id="keyword_arguments">Keyword Arguments</h4>
+<h3 id="keyword_arguments">Keyword Arguments</h3>
 
 <p>Mixins can also be included using explicit keyword arguments. For instance, we the above example could be written as:</p>
 
@@ -1724,7 +1724,7 @@ providing many arguments without becoming difficult to call.</p>
 default values can be omitted. Since the named arguments are variable 
 names, underscores and dashes can be used interchangeably.</p>
 
-<h4 id="variable_arguments">Variable Arguments</h4>
+<h3 id="variable_arguments">Variable Arguments</h3>
 
 <p>Sometimes it makes sense for a mixin to take an unknown number of 
 arguments. For example, a mixin for creating box shadows might take any 
@@ -1827,7 +1827,7 @@ construction of selectors and directives.</p>
 
 <p><strong>Note:</strong> when the <code>@content</code> directive is specified more than once or in a loop, the style block will be duplicated with each invocation.</p>
 
-<h4 id="variable_scope_and_content_blocks">Variable Scope and Content Blocks</h4>
+<h3 id="variable_scope_and_content_blocks">Variable Scope and Content Blocks</h3>
 
 <p>The block of content passed to a mixin are evaluated in the scope 
 where the block is defined, not in the scope of the mixin. This means 
