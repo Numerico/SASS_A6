@@ -7,7 +7,7 @@
  stylesheets well-organized, and get small stylesheets up and running 
 quickly, particularly with the help of <a href="http://compass-style.org/">the Compass style library</a>.</p>
 
-<h2 id="features">Features</h2>
+<h1 id="features">Features</h1>
 
 <ul>
 <li>Fully CSS3-compatible</li>
@@ -23,7 +23,7 @@ quickly, particularly with the help of <a href="http://compass-style.org/">the C
 <li><a href="https://addons.mozilla.org/en-US/firefox/addon/103988">Firebug integration</a></li>
 </ul>
 
-<h2 id="syntax">Syntax</h2>
+<h1 id="syntax">Syntax</h1>
 
 <p>There are two syntaxes available for Sass. The first, known as SCSS 
 (Sassy CSS) and used throughout this reference, is an extension of the 
@@ -47,7 +47,7 @@ $ sass-convert style.sass style.scss
 # Convert SCSS to Sass
 $ sass-convert style.scss style.sass</pre>
 
-<h2 id="using_sass">Using Sass</h2>
+<h1 id="using_sass">Using Sass</h1>
 
 <p>Sass can be used in three ways: as a command-line tool, as a 
 standalone Ruby module, and as a plugin for any Rack-enabled framework, 
@@ -295,7 +295,7 @@ encodings, and so Sass behaves somewhat differently when running under
 it than under Ruby 1.9 and later. In Ruby 1.8, Sass simply uses the 
 first <code>@charset</code> declaration in the stylesheet or any of the other stylesheets it <code>@import</code>s.</p>
 
-<h2 id="css_extensions">CSS Extensions</h2>
+<h1 id="css_extensions">CSS Extensions</h1>
 
 <h3 id="nested_rules">Nested Rules</h3>
 
@@ -439,7 +439,7 @@ sub-properties within it. For example:</p>
 
 <p>On their own, without any use of <code>@extend</code>, rulesets that use placeholder selectors will not be rendered to CSS.</p>
 
-<h2 id="comments">Comments: <code>/* */</code> and <code>//</code></h2>
+<h1 id="comments">Comments: <code>/* */</code> and <code>//</code></h1>
 
 <p>Sass supports standard multiline CSS comments with <code>/* */</code>, as well as single-line comments with <code>//</code>.
  The multiline comments are preserved in the CSS output where possible, 
@@ -473,7 +473,7 @@ will be interpolated and always rendered into css output even in
 compressed output modes. This is useful for adding Copyright notices to 
 your generated CSS.</p>
 
-<h2 id="sassscript">SassScript</h2>
+<h1 id="sassscript">SassScript</h1>
 
 <p>In addition to the plain CSS property syntax, Sass supports a small 
 set of extensions called SassScript. SassScript allows properties to use
@@ -900,7 +900,7 @@ $content: "Non-null content" !default;
 <pre class="code">#main {
   content: "Non-null content"; }</pre>
 
-<h2 id="directives"><code>@</code>-Rules and Directives</h2>
+<h1 id="directives"><code>@</code>-Rules and Directives</h1>
 
 <p>Sass supports all CSS3 <code>@</code>-rules, as well as some 
 additional Sass-specific ones known as &#8220;directives.&#8221; These have various 
@@ -1463,7 +1463,7 @@ warning.</li>
   position: relative; left: $x; top: $y;
 }</pre>
 
-<h2 id="control_directives">Control Directives</h2>
+<h1 id="control_directives">Control Directives</h1>
 
 <p>SassScript supports basic control directives for including styles 
 only under some conditions or including the same style several times 
@@ -1571,7 +1571,7 @@ The directive has two forms: <code>@for $var from &lt;start&gt; through &lt;end&
 .item-2 {
   width: 4em; }</pre>
 
-<h2 id="mixins">Mixin Directives</h2>
+<h1 id="mixins">Mixin Directives</h1>
 
 <p>Mixins allow you to define styles that can be re-used throughout the 
 stylesheet without needing to resort to non-semantic classes like <code>.float-left</code>. Mixins can also contain full CSS rules, and anything else allowed elsewhere in a Sass document. They can even take <a href="#mixin-arguments">arguments</a> which allows you to produce a wide variety of styles with very few mixins.</p>
@@ -1863,7 +1863,7 @@ where the block is defined. For example:</p>
   }
 }</pre>
 
-<h2 id="function_directives">Function Directives</h2>
+<h1 id="function_directives">Function Directives</h1>
 
 <p>It is possible to define your own functions in sass and use them in any value or script context. For example:</p>
 
@@ -1898,7 +1898,7 @@ named the function above <code>-acme-grid-width</code>.</p>
 
 <p>User-defined functions also support <a href="#variable_arguments">variable arguments</a> in the same way as mixins.</p>
 
-<h2 id="output_style">Output Style</h2>
+<h1 id="output_style">Output Style</h1>
 
 <p>Although the default CSS style that Sass outputs is very nice and 
 reflects the structure of the document, tastes and needs vary and so 
@@ -1971,7 +1971,7 @@ It&#8217;s not meant to be human-readable. For example:</p>
 
 <pre class="code">#main{color:#fff;background-color:#000}#main p{width:10em}.huge{font-size:10em;font-weight:bold;text-decoration:underline}</pre>
 
-<h2 id="extending_sass">Extending Sass</h2>
+<h1 id="extending_sass">Extending Sass</h1>
 
 <p>Sass provides a number of advanced customizations for users with 
 unique requirements. Using these features requires a strong 
