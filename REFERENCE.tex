@@ -1,0 +1,2011 @@
+\documentclass[10pt]{article}
+\usepackage{fullpage, graphicx, url}
+\setlength{\parskip}{1ex}
+\setlength{\parindent}{0ex}
+\title{SASS REFERENCE}
+\begin{document}
+
+
+ Sass is an extension of CSS that adds power and elegance to the basic language. It allows you to use variables, nested rules, mixins, inline imports, and more, all with a fully CSS-compatible syntax. Sass helps keep large stylesheets well-organized, and get small stylesheets up and running quickly, particularly with the help of the Compass style library.
+\section{Features}
+\begin{itemize}
+\item Fully CSS3-compatible
+\item Language extensions such as variables, nesting, and mixins
+\item Many useful functions for manipulating colors and other values
+\item Advanced features like control directives for libraries
+\item Well-formatted, customizable output
+\item Firebug integration
+
+\end{itemize}
+\section{Syntax}
+
+
+ There are two syntaxes available for Sass. The first, known as SCSS (Sassy CSS) and used throughout this reference, is an extension of the syntax of CSS3. This means that every valid CSS3 stylesheet is a valid SCSS file with the same meaning. In addition, SCSS understands most CSS hacks and vendor-specific syntax, such as IE’s old filter syntax. This syntax is enhanced with the Sass features described below. Files using this syntax have the .scss extension.
+
+
+ The second and older syntax, known as the indented syntax (or sometimes just “Sass”), provides a more concise way of writing CSS. It uses indentation rather than brackets to indicate nesting of selectors, and newlines rather than semicolons to separate properties. Some people find this to be easier to read and quicker to write than SCSS. The indented syntax has all the same features, although some of them have slightly different syntax; this is described in the indented syntax reference. Files using this syntax have the .sass extension.
+
+
+ Either syntax can import files written in the other. Files can be automatically converted from one syntax to the other using the sass-convert command line tool:
+\begin{verbatim}
+# Convert Sass to SCSS
+$ sass-convert style.sass style.scss
+
+# Convert SCSS to Sass
+$ sass-convert style.scss style.sass
+\end{verbatim}
+\section{Using Sass}
+
+
+ Sass can be used in three ways: as a command-line tool, as a standalone Ruby module, and as a plugin for any Rack-enabled framework, including Ruby on Rails and Merb. The first step for all of these is to install the Sass gem:
+\begin{verbatim}
+gem install sass
+\end{verbatim}
+
+
+ If you’re using Windows, you may need to install Ruby first.
+
+
+ To run Sass from the command line, just use
+\begin{verbatim}
+sass input.scss output.css
+\end{verbatim}
+
+
+ You can also tell Sass to watch the file and update the CSS every time the Sass file changes:
+\begin{verbatim}
+sass --watch input.scss:output.css
+\end{verbatim}
+
+
+ If you have a directory with many Sass files, you can also tell Sass to watch the entire directory:
+\begin{verbatim}
+sass --watch app/sass:public/stylesheets
+\end{verbatim}
+
+
+ Use sass --help for full documentation.
+
+
+ Using Sass in Ruby code is very simple. After installing the Sass gem, you can use it by running require ``sass'' and using Sass::Engine like so:
+\begin{verbatim}
+engine = Sass::Engine.new("#main {background-color: #0000ff}", :syntax => :scss)
+engine.render #=> "#main { background-color: #0000ff; }\n"
+\end{verbatim}
+\subsection{Rack/Rails/Merb Plugin}
+
+
+ To enable Sass in Rails versions before Rails 3, add the following line to environment.rb:
+\begin{verbatim}
+config.gem "sass"
+\end{verbatim}
+
+
+ For Rails 3, instead add the following line to the Gemfile:
+\begin{verbatim}
+gem "sass"
+\end{verbatim}
+
+
+ To enable Sass in Merb, add the following line to config/dependencies.rb:
+\begin{verbatim}
+dependency "merb-haml"
+\end{verbatim}
+
+
+ To enable Sass in a Rack application, add
+\begin{verbatim}
+require 'sass/plugin/rack'
+use Sass::Plugin::Rack
+\end{verbatim}
+
+
+ to config.ru.
+
+
+ Sass stylesheets don’t work the same as views. They don’t contain dynamic content, so the CSS only needs to be generated when the Sass file has been updated. By default, .sass and .scss files are placed in public/stylesheets/sass (this can be customized with the :template\_location option). Then, whenever necessary, they’re compiled into corresponding CSS files in public/stylesheets. For instance, public/stylesheets/sass/main.scss would be compiled to public/stylesheets/main.css.
+\subsection{Caching}
+
+
+ By default, Sass caches compiled templates and partials. This dramatically speeds up re-compilation of large collections of Sass files, and works best if the Sass templates are split up into separate files that are all @imported into one large file.
+
+
+ Without a framework, Sass puts the cached templates in the .sass-cache directory. In Rails and Merb, they go in tmp/sass-cache. The directory can be customized with the :cache\_location option. If you don’t want Sass to use caching at all, set the :cache option to false.
+\subsection{Options}
+
+
+ Options can be set by setting the Sass::Plugin\#options hash in environment.rb in Rails or config.ru in Rack…
+\begin{verbatim}
+Sass::Plugin.options[:style] = :compact
+\end{verbatim}
+
+
+ …or by setting the Merb::Plugin.config[:sass] hash in init.rb in Merb…
+\begin{verbatim}
+Merb::Plugin.config[:sass][:style] = :compact
+\end{verbatim}
+
+
+ …or by passing an options hash to Sass::Engine\#initialize. All relevant options are also available via flags to the sass and scss command-line executables. Available options are:
+\begin{description}
+\item[:style]Sets the style of the CSS output. See Output Style.
+\item[:syntax]The syntax of the input file, :sass for the indented syntax and :scss for the CSS-extension syntax. This is only useful when you’re constructing Sass::Engine instances yourself; it’s automatically set properly when using Sass::Plugin. Defaults to :sass.
+\item[:property\_syntax]Forces indented-syntax documents to use one syntax for properties. If the correct syntax isn’t used, an error is thrown. :new forces the use of a colon after the property name. For example: color: \#0f3 or width: \$main\_width. :old forces the use of a colon before the property name. For example: :color \#0f3 or :width \$main\_width. By default, either syntax is valid. This has no effect on SCSS documents.
+\item[:cache]Whether parsed Sass files should be cached, allowing greater speed. Defaults to true.
+\item[:read\_cache]If this is set and :cache is not, only read the Sass cache if it exists, don’t write to it if it doesn’t.
+\item[:cache\_store]If this is set to an instance of a subclass of Sass::CacheStores::Base, that cache store will be used to store and retrieve cached compilation results. Defaults to a Sass::CacheStores::Filesystem that is initialized using the :cache\_location option.
+\item[:never\_update]Whether the CSS files should never be updated, even if the template file changes. Setting this to true may give small performance gains. It always defaults to false. Only has meaning within Rack, Ruby on Rails, or Merb.
+\item[:always\_update]Whether the CSS files should be updated every time a controller is accessed, as opposed to only when the template has been modified. Defaults to false. Only has meaning within Rack, Ruby on Rails, or Merb.
+\item[:always\_check]Whether a Sass template should be checked for updates every time a controller is accessed, as opposed to only when the server starts. If a Sass template has been updated, it will be recompiled and will overwrite the corresponding CSS file. Defaults to false in production mode, true otherwise. Only has meaning within Rack, Ruby on Rails, or Merb.
+\item[:poll]When true, always use the polling backend for Sass::Plugin::Compiler\#watch rather than the native filesystem backend.
+\item[:full\_exception]Whether an error in the Sass code should cause Sass to provide a detailed description within the generated CSS file. If set to true, the error will be displayed along with a line number and source snippet both as a comment in the CSS file and at the top of the page (in supported browsers). Otherwise, an exception will be raised in the Ruby code. Defaults to false in production mode, true otherwise. Only has meaning within Rack, Ruby on Rails, or Merb.
+\item[:template\_location]A path to the root sass template directory for your application. If a hash, :css\_location is ignored and this option designates a mapping between input and output directories. May also be given a list of 2-element lists, instead of a hash. Defaults to css\_location + ``/sass''. Only has meaning within Rack, Ruby on Rails, or Merb. Note that if multiple template locations are specified, all of them are placed in the import path, allowing you to import between them. \textbf{Note that due to the many possible formats it can take, this option should only be set directly, not accessed or modified. Use the Sass::Plugin\#template\_location\_array, Sass::Plugin\#add\_template\_location, and Sass::Plugin\#remove\_template\_location methods instead}
+.
+\item[:css\_location]The path where CSS output should be written to. This option is ignored when :template\_location is a Hash. Defaults to ``./public/stylesheets''. Only has meaning within Rack, Ruby on Rails, or Merb.
+\item[:cache\_location]The path where the cached sassc files should be written to. Defaults to ``./tmp/sass-cache'' in Rails and Merb, or ``./.sass-cache'' otherwise. If the :cache\_store option is set, this is ignored.
+\item[:unix\_newlines]If true, use Unix-style newlines when writing files. Only has meaning on Windows, and only when Sass is writing the files (in Rack, Rails, or Merb, when using Sass::Plugin directly, or when using the command-line executable).
+\item[:filename]The filename of the file being rendered. This is used solely for reporting errors, and is automatically set when using Rack, Rails, or Merb.
+\item[:line]The number of the first line of the Sass template. Used for reporting line numbers for errors. This is useful to set if the Sass template is embedded in a Ruby file.
+\item[:load\_paths]An array of filesystem paths or importers which should be searched for Sass templates imported with the @import directive. These may be strings, Pathname objects, or subclasses of Sass::Importers::Base. This defaults to the working directory and, in Rack, Rails, or Merb, whatever :template\_location is. The load path is also informed by Sass.load\_paths and the SASS\_PATH environment variable.
+\item[:filesystem\_importer]A Sass::Importers::Base subclass used to handle plain string load paths. This should import files from the filesystem. It should be a Class object inheriting from Sass::Importers::Base with a constructor that takes a single string argument (the load path). Defaults to Sass::Importers::Filesystem.
+\item[:line\_numbers]When set to true, causes the line number and file where a selector is defined to be emitted into the compiled CSS as a comment. Useful for debugging, especially when using imports and mixins. This option may also be called :line\_comments. Automatically disabled when using the :compressed output style or the :debug\_info/:trace\_selectors options.
+\item[:trace\_selectors]When set to true, emit a full trace of imports and mixins before each selector. This can be helpful for in-browser debugging of stylesheet imports and mixin includes. This option supersedes the :line\_comments option and is superseded by the :debug\_info option. Automatically disabled when using the :compressed output style.
+\item[:debug\_info]When set to true, causes the line number and file where a selector is defined to be emitted into the compiled CSS in a format that can be understood by the browser. Useful in conjunction with the FireSass Firebug extension for displaying the Sass filename and line number. Automatically disabled when using the :compressed output style.
+\item[:custom]An option that’s available for individual applications to set to make data available to custom Sass functions.
+\item[:quiet]When set to true, causes warnings to be disabled.
+
+\end{description}
+\subsection{Syntax Selection}
+
+
+ The Sass command-line tool will use the file extension to determine which syntax you are using, but there’s not always a filename. The sass command-line program defaults to the indented syntax but you can pass the --scss option to it if the input should be interpreted as SCSS syntax. Alternatively, you can use the scss command-line program which is exactly like the sass program but it defaults to assuming the syntax is SCSS.
+\subsection{Encodings}
+
+
+ When running on Ruby 1.9 and later, Sass is aware of the character encoding of documents. By default, Sass assumes that all stylesheets are encoded using whatever coding system your operating system defaults to. For many users this will be UTF-8, the de facto standard for the web. For some users, though, it may be a more local encoding.
+
+
+ If you want to use a different encoding for your stylesheet than your operating system default, you can use the @charset declaration just like in CSS. Add @charset ``encoding-name''; at the beginning of the stylesheet (before any whitespace or comments) and Sass will interpret it as the given encoding. Note that whatever encoding you use, it must be convertible to Unicode.
+
+
+ Sass will also respect any Unicode BOMs and non-ASCII-compatible Unicode encodings as specified by the CSS spec, although this is \emph{not}
+ the recommended way to specify the character set for a document. Note that Sass does not support the obscure UTF-32-2143, UTF-32-3412, EBCDIC, IBM1026, and GSM 03.38 encodings, since Ruby does not have support for them and they’re highly unlikely to ever be used in practice.
+\subsubsection{Output Encoding}
+
+
+ In general, Sass will try to encode the output stylesheet using the same encoding as the input stylesheet. In order for it to do this, though, the input stylesheet must have a @charset declaration; otherwise, Sass will default to encoding the output stylesheet as UTF-8. In addition, it will add a @charset declaration to the output if it’s not plain ASCII.
+
+
+ When other stylesheets with @charset declarations are @imported, Sass will convert them to the same encoding as the main stylesheet.
+
+
+ Note that Ruby 1.8 does not have good support for character encodings, and so Sass behaves somewhat differently when running under it than under Ruby 1.9 and later. In Ruby 1.8, Sass simply uses the first @charset declaration in the stylesheet or any of the other stylesheets it @imports.
+\section{CSS Extensions}
+\subsection{Nested Rules}
+
+
+ Sass allows CSS rules to be nested within one another. The inner rule then only applies within the outer rule’s selector. For example:
+\begin{verbatim}
+#main p {
+  color: #00ff00;
+  width: 97%;
+
+  .redbox {
+    background-color: #ff0000;
+    color: #000000;
+  }
+}
+\end{verbatim}
+
+
+ is compiled to:
+\begin{verbatim}
+#main p {
+  color: #00ff00;
+  width: 97%; }
+  #main p .redbox {
+    background-color: #ff0000;
+    color: #000000; }
+\end{verbatim}
+
+
+ This helps avoid repetition of parent selectors, and makes complex CSS layouts with lots of nested selectors much simpler. For example:
+\begin{verbatim}
+#main {
+  width: 97%;
+
+  p, div {
+    font-size: 2em;
+    a { font-weight: bold; }
+  }
+
+  pre { font-size: 3em; }
+}
+\end{verbatim}
+
+
+ is compiled to:
+\begin{verbatim}
+#main {
+  width: 97%; }
+  #main p, #main div {
+    font-size: 2em; }
+    #main p a, #main div a {
+      font-weight: bold; }
+  #main pre {
+    font-size: 3em; }
+\end{verbatim}
+\subsection{Referencing Parent Selectors: \&}
+
+
+ Sometimes it’s useful to use a nested rule’s parent selector in other ways than the default. For instance, you might want to have special styles for when that selector is hovered over or for when the body element has a certain class. In these cases, you can explicitly specify where the parent selector should be inserted using the \& character. For example:
+\begin{verbatim}
+a {
+  font-weight: bold;
+  text-decoration: none;
+  &:hover { text-decoration: underline; }
+  body.firefox & { font-weight: normal; }
+}
+\end{verbatim}
+
+
+ is compiled to:
+\begin{verbatim}
+a {
+  font-weight: bold;
+  text-decoration: none; }
+  a:hover {
+    text-decoration: underline; }
+  body.firefox a {
+    font-weight: normal; }
+\end{verbatim}
+
+
+ \& will be replaced with the parent selector as it appears in the CSS. This means that if you have a deeply nested rule, the parent selector will be fully resolved before the \& is replaced. For example:
+\begin{verbatim}
+#main {
+  color: black;
+  a {
+    font-weight: bold;
+    &:hover { color: red; }
+  }
+}
+\end{verbatim}
+
+
+ is compiled to:
+\begin{verbatim}
+#main {
+  color: black; }
+  #main a {
+    font-weight: bold; }
+    #main a:hover {
+      color: red; }
+\end{verbatim}
+\subsection{Nested Properties}
+
+
+ CSS has quite a few properties that are in “namespaces;” for instance, font-family, font-size, and font-weight are all in the font namespace. In CSS, if you want to set a bunch of properties in the same namespace, you have to type it out each time. Sass provides a shortcut for this: just write the namespace once, then nest each of the sub-properties within it. For example:
+\begin{verbatim}
+.funky {
+  font: {
+    family: fantasy;
+    size: 30em;
+    weight: bold;
+  }
+}
+\end{verbatim}
+
+
+ is compiled to:
+\begin{verbatim}
+.funky {
+  font-family: fantasy;
+  font-size: 30em;
+  font-weight: bold; }
+\end{verbatim}
+
+
+ The property namespace itself can also have a value. For example:
+\begin{verbatim}
+.funky {
+  font: 2px/3px {
+    family: fantasy;
+    size: 30em;
+    weight: bold;
+  }
+}
+\end{verbatim}
+
+
+ is compiled to:
+\begin{verbatim}
+.funky {
+  font: 2px/3px;
+    font-family: fantasy;
+    font-size: 30em;
+    font-weight: bold; }
+\end{verbatim}
+\subsection{Placeholder Selectors: \%foo}
+
+
+ Sass supports a special type of selector called a “placeholder selector”. These look like class and id selectors, except the \# or . is replaced by \%. They’re meant to be used with the @extend directive; for more information see @extend-Only Selectors.
+
+
+ On their own, without any use of @extend, rulesets that use placeholder selectors will not be rendered to CSS.
+\section{Comments: /* */ and //}
+
+
+ Sass supports standard multiline CSS comments with /* */, as well as single-line comments with //. The multiline comments are preserved in the CSS output where possible, while the single-line comments are removed. For example:
+\begin{verbatim}
+/* This comment is
+ * several lines long.
+ * since it uses the CSS comment syntax,
+ * it will appear in the CSS output. */
+body { color: black; }
+
+// These comments are only one line long each.
+// They won't appear in the CSS output,
+// since they use the single-line comment syntax.
+a { color: green; }
+\end{verbatim}
+
+
+ is compiled to:
+\begin{verbatim}
+/* This comment is
+ * several lines long.
+ * since it uses the CSS comment syntax,
+ * it will appear in the CSS output. */
+body {
+  color: black; }
+
+a {
+  color: green; }
+\end{verbatim}
+
+
+ When the first letter of a comment is !, the comment will be interpolated and always rendered into css output even in compressed output modes. This is useful for adding Copyright notices to your generated CSS.
+\section{SassScript}
+
+
+ In addition to the plain CSS property syntax, Sass supports a small set of extensions called SassScript. SassScript allows properties to use variables, arithmetic, and extra functions. SassScript can be used in any property value.
+
+
+ SassScript can also be used to generate selectors and property names, which is useful when writing mixins. This is done via interpolation.
+\subsection{Interactive Shell}
+
+
+ You can easily experiment with SassScript using the interactive shell. To launch the shell run the sass command-line with the -i option. At the prompt, enter any legal SassScript expression to have it evaluated and the result printed out for you:
+\begin{verbatim}
+$ sass -i
+>> "Hello, Sassy World!"
+"Hello, Sassy World!"
+>> 1px + 1px + 1px
+3px
+>> #777 + #777
+#eeeeee
+>> #777 + #888
+white
+\end{verbatim}
+\subsection{Variables: \$}
+
+
+ The most straightforward way to use SassScript is to use variables. Variables begin with dollar signs, and are set like CSS properties:
+\begin{verbatim}
+$width: 5em;
+\end{verbatim}
+
+
+ You can then refer to them in properties:
+\begin{verbatim}
+#main {
+  width: $width;
+}
+\end{verbatim}
+
+
+ Variables are only available within the level of nested selectors where they’re defined. If they’re defined outside of any nested selectors, they’re available everywhere.
+
+
+ Variables used to use the prefix character !; this still works, but it’s deprecated and prints a warning. \$ is the recommended syntax.
+
+
+ Variables also used to be defined with = rather than :; this still works, but it’s deprecated and prints a warning. : is the recommended syntax.
+\subsection{Data Types}
+
+
+ SassScript supports six main data types:
+\begin{itemize}
+\item numbers (e.g. 1.2, 13, 10px)
+\item strings of text, with and without quotes (e.g. ``foo'', 'bar', baz)
+\item colors (e.g. blue, \#04a3f9, rgba(255, 0, 0, 0.5))
+\item booleans (e.g. true, false)
+\item nulls (e.g. null)
+\item lists of values, separated by spaces or commas (e.g. 1.5em 1em 0 2em, Helvetica, Arial, sans-serif)
+
+\end{itemize}
+
+
+ SassScript also supports all other types of CSS property value, such as Unicode ranges and !important declarations. However, it has no special handling for these types. They’re treated just like unquoted strings.
+\subsubsection{Strings}
+
+
+ CSS specifies two kinds of strings: those with quotes, such as ``Lucida Grande'' or '\url{http://sass-lang.com}', and those without quotes, such as sans-serif or bold. SassScript recognizes both kinds, and in general if one kind of string is used in the Sass document, that kind of string will be used in the resulting CSS.
+
+
+ There is one exception to this, though: when using \#\{\} interpolation, quoted strings are unquoted. This makes it easier to use e.g. selector names in mixins. For example:
+\begin{verbatim}
+@mixin firefox-message($selector) {
+  body.firefox #{$selector}:before {
+    content: "Hi, Firefox users!";
+  }
+}
+
+@include firefox-message(".header");
+\end{verbatim}
+
+
+ is compiled to:
+\begin{verbatim}
+body.firefox .header:before {
+  content: "Hi, Firefox users!"; }
+\end{verbatim}
+
+
+ It’s also worth noting that when using the deprecated = property syntax, all strings are interpreted as unquoted, regardless of whether or not they’re written with quotes.
+\subsubsection{Lists}
+
+
+ Lists are how Sass represents the values of CSS declarations like margin: 10px 15px 0 0 or font-face: Helvetica, Arial, sans-serif. Lists are just a series of other values, separated by either spaces or commas. In fact, individual values count as lists, too: they’re just lists with one item.
+
+
+ On their own, lists don’t do much, but the Sass list functions make them useful. The nth function can access items in a list, the join function can join multiple lists together, and the append function can add items to lists. The @each rule can also add styles for each item in a list.
+
+
+ In addition to containing simple values, lists can contain other lists. For example, 1px 2px, 5px 6px is a two-item list containing the list 1px 2px and the list 5px 6px. If the inner lists have the same separator as the outer list, you’ll need to use parentheses to make it clear where the inner lists start and stop. For example, (1px 2px) (5px 6px) is also a two-item list containing the list 1px 2px and the list 5px 6px. The difference is that the outer list is space-separated, where before it was comma-separated.
+
+
+ When lists are turned into plain CSS, Sass doesn’t add any parentheses, since CSS doesn’t understand them. That means that (1px 2px) (5px 6px) and 1px 2px 5px 6px will look the same when they become CSS. However, they aren’t the same when they’re Sass: the first is a list containing two lists, while the second is a list containing four numbers.
+
+
+ Lists can also have no items in them at all. These lists are represented as (). They can’t be output directly to CSS; if you try to do e.g. font-family: (), Sass will raise an error. If a list contains empty lists or null values, as in 1px 2px () 3px or 1px 2px null 3px, the empty lists and null values will be removed before the containing list is turned into CSS.
+\subsection{Operations}
+
+
+ All types support equality operations (== and !=). In addition, each type has its own operations that it has special support for.
+\subsubsection{Number Operations}
+
+
+ SassScript supports the standard arithmetic operations on numbers (+, -, *, /, \%), and will automatically convert between units if it can:
+\begin{verbatim}
+p {
+  width: 1in + 8pt;
+}
+\end{verbatim}
+
+
+ is compiled to:
+\begin{verbatim}
+p {
+  width: 1.111in; }
+\end{verbatim}
+
+
+ Relational operators ($<$, $>$, $<$=, $>$=) are also supported for numbers, and equality operators (==, !=) are supported for all types.
+\textbf{Division and /}
+
+
+ CSS allows / to appear in property values as a way of separating numbers. Since SassScript is an extension of the CSS property syntax, it must support this, while also allowing / to be used for division. This means that by default, if two numbers are separated by / in SassScript, then they will appear that way in the resulting CSS.
+
+
+ However, there are three situations where the / will be interpreted as division. These cover the vast majority of cases where division is actually used. They are:
+\begin{enumerate}
+\item If the value, or any part of it, is stored in a variable.
+\item If the value is surrounded by parentheses.
+\item If the value is used as part of another arithmetic expression.
+
+\end{enumerate}
+
+
+ For example:
+\begin{verbatim}
+p {
+  font: 10px/8px;             // Plain CSS, no division
+  $width: 1000px;
+  width: $width/2;            // Uses a variable, does division
+  height: (500px/2);          // Uses parentheses, does division
+  margin-left: 5px + 8px/2px; // Uses +, does division
+}
+\end{verbatim}
+
+
+ is compiled to:
+\begin{verbatim}
+p {
+  font: 10px/8px;
+  width: 500px;
+  height: 250px;
+  margin-left: 9px; }
+\end{verbatim}
+
+
+ If you want to use variables along with a plain CSS /, you can use \#\{\} to insert them. For example:
+\begin{verbatim}
+p {
+  $font-size: 12px;
+  $line-height: 30px;
+  font: #{$font-size}/#{$line-height};
+}
+\end{verbatim}
+
+
+ is compiled to:
+\begin{verbatim}
+p {
+  font: 12px/30px; }
+\end{verbatim}
+\subsubsection{Color Operations}
+
+
+ All arithmetic operations are supported for color values, where they work piecewise. This means that the operation is performed on the red, green, and blue components in turn. For example:
+\begin{verbatim}
+p {
+  color: #010203 + #040506;
+}
+\end{verbatim}
+
+
+ computes 01 + 04 = 05, 02 + 05 = 07, and 03 + 06 = 09, and is compiled to:
+\begin{verbatim}
+p {
+  color: #050709; }
+\end{verbatim}
+
+
+ Often it’s more useful to use color functions than to try to use color arithmetic to achieve the same effect.
+
+
+ Arithmetic operations also work between numbers and colors, also piecewise. For example:
+\begin{verbatim}
+p {
+  color: #010203 * 2;
+}
+\end{verbatim}
+
+
+ computes 01 * 2 = 02, 02 * 2 = 04, and 03 * 2 = 06, and is compiled to:
+\begin{verbatim}
+p {
+  color: #020406; }
+\end{verbatim}
+
+
+ Note that colors with an alpha channel (those created with the rgba or hsla functions) must have the same alpha value in order for color arithmetic to be done with them. The arithmetic doesn’t affect the alpha value. For example:
+\begin{verbatim}
+p {
+  color: rgba(255, 0, 0, 0.75) + rgba(0, 255, 0, 0.75);
+}
+\end{verbatim}
+
+
+ is compiled to:
+\begin{verbatim}
+p {
+  color: rgba(255, 255, 0, 0.75); }
+\end{verbatim}
+
+
+ The alpha channel of a color can be adjusted using the opacify and transparentize functions. For example:
+\begin{verbatim}
+$translucent-red: rgba(255, 0, 0, 0.5);
+p {
+  color: opacify($translucent-red, 0.3);
+  background-color: transparentize($translucent-red, 0.25);
+}
+\end{verbatim}
+
+
+ is compiled to:
+\begin{verbatim}
+p {
+  color: rgba(255, 0, 0, 0.9);
+  background-color: rgba(255, 0, 0, 0.25); }
+\end{verbatim}
+
+
+ IE filters require all colors include the alpha layer, and be in the strict format of \#AABBCCDD. You can more easily convert the color using the ie\_hex\_str function. For example:
+\begin{verbatim}
+$translucent-red: rgba(255, 0, 0, 0.5);
+$green: #00ff00;
+div {
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled='false', startColorstr='#{ie-hex-str($green)}', endColorstr='#{ie-hex-str($translucent-red)}');
+}
+\end{verbatim}
+
+
+ is compiled to:
+\begin{verbatim}
+div {
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled='false', startColorstr=#FF00FF00, endColorstr=#80FF0000);
+}
+\end{verbatim}
+\subsubsection{String Operations}
+
+
+ The + operation can be used to concatenate strings:
+\begin{verbatim}
+p {
+  cursor: e + -resize;
+}
+\end{verbatim}
+
+
+ is compiled to:
+\begin{verbatim}
+p {
+  cursor: e-resize; }
+\end{verbatim}
+
+
+ Note that if a quoted string is added to an unquoted string (that is, the quoted string is to the left of the +), the result is a quoted string. Likewise, if an unquoted string is added to a quoted string (the unquoted string is to the left of the +), the result is an unquoted string. For example:
+\begin{verbatim}
+p:before {
+  content: "Foo " + Bar;
+  font-family: sans- + "serif";
+}
+\end{verbatim}
+
+
+ is compiled to:
+\begin{verbatim}
+p:before {
+  content: "Foo Bar";
+  font-family: sans-serif; }
+\end{verbatim}
+
+
+ By default, if two values are placed next to one another, they are concatenated with a space:
+\begin{verbatim}
+p {
+  margin: 3px + 4px auto;
+}
+\end{verbatim}
+
+
+ is compiled to:
+\begin{verbatim}
+p {
+  margin: 7px auto; }
+\end{verbatim}
+
+
+ Within a string of text, \#\{\} style interpolation can be used to place dynamic values within the string:
+\begin{verbatim}
+p:before {
+  content: "I ate #{5 + 10} pies!";
+}
+\end{verbatim}
+
+
+ is compiled to:
+\begin{verbatim}
+p:before {
+  content: "I ate 15 pies!"; }
+\end{verbatim}
+
+
+ Null values are treated as empty strings for string interpolation:
+\begin{verbatim}
+$value: null;
+p:before {
+  content: "I ate #{$value} pies!";
+}
+\end{verbatim}
+
+
+ is compiled to:
+\begin{verbatim}
+p:before {
+  content: "I ate  pies!"; }
+\end{verbatim}
+\subsubsection{Boolean Operations}
+
+
+ SassScript supports and, or, and not operators for boolean values.
+\subsubsection{List Operations}
+
+
+ Lists don’t support any special operations. Instead, they’re manipulated using the list functions.
+\subsection{Parentheses}
+
+
+ Parentheses can be used to affect the order of operations:
+\begin{verbatim}
+p {
+  width: 1em + (2em * 3);
+}
+\end{verbatim}
+
+
+ is compiled to:
+\begin{verbatim}
+p {
+  width: 7em; }
+\end{verbatim}
+\subsection{Functions}
+
+
+ SassScript defines some useful functions that are called using the normal CSS function syntax:
+\begin{verbatim}
+p {
+  color: hsl(0, 100%, 50%);
+}
+\end{verbatim}
+
+
+ is compiled to:
+\begin{verbatim}
+p {
+  color: #ff0000; }
+\end{verbatim}
+\subsubsection{Keyword Arguments}
+
+
+ Sass functions can also be called using explicit keyword arguments. The above example can also be written as:
+\begin{verbatim}
+p {
+  color: hsl($hue: 0, $saturation: 100%, $lightness: 50%);
+}
+\end{verbatim}
+
+
+ While this is less concise, it can make the stylesheet easier to read. It also allows functions to present more flexible interfaces, providing many arguments without becoming difficult to call.
+
+
+ Named arguments can be passed in any order, and arguments with default values can be omitted. Since the named arguments are variable names, underscores and dashes can be used interchangeably.
+
+
+ See Sass::Script::Functions for a full listing of Sass functions and their argument names, as well as instructions on defining your own in Ruby.
+\subsection{Interpolation: \#\{\}}
+
+
+ You can also use SassScript variables in selectors and property names using \#\{\} interpolation syntax:
+\begin{verbatim}
+$name: foo;
+$attr: border;
+p.#{$name} {
+  #{$attr}-color: blue;
+}
+\end{verbatim}
+
+
+ is compiled to:
+\begin{verbatim}
+p.foo {
+  border-color: blue; }
+\end{verbatim}
+
+
+ It’s also possible to use \#\{\} to put SassScript into property values. In most cases this isn’t any better than using a variable, but using \#\{\} does mean that any operations near it will be treated as plain CSS. For example:
+\begin{verbatim}
+p {
+  $font-size: 12px;
+  $line-height: 30px;
+  font: #{$font-size}/#{$line-height};
+}
+\end{verbatim}
+
+
+ is compiled to:
+\begin{verbatim}
+p {
+  font: 12px/30px; }
+\end{verbatim}
+\subsection{Variable Defaults: !default}
+
+
+ You can assign to variables if they aren’t already assigned by adding the !default flag to the end of the value. This means that if the variable has already been assigned to, it won’t be re-assigned, but if it doesn’t have a value yet, it will be given one.
+
+
+ For example:
+\begin{verbatim}
+$content: "First content";
+$content: "Second content?" !default;
+$new_content: "First time reference" !default;
+
+#main {
+  content: $content;
+  new-content: $new_content;
+}
+\end{verbatim}
+
+
+ is compiled to:
+\begin{verbatim}
+#main {
+  content: "First content";
+  new-content: "First time reference"; }
+\end{verbatim}
+
+
+ Variables with null values are treated as unassigned by !default:
+\begin{verbatim}
+$content: null;
+$content: "Non-null content" !default;
+
+#main {
+  content: $content;
+}
+\end{verbatim}
+
+
+ is compiled to:
+\begin{verbatim}
+#main {
+  content: "Non-null content"; }
+\end{verbatim}
+\section{@-Rules and Directives}
+
+
+ Sass supports all CSS3 @-rules, as well as some additional Sass-specific ones known as “directives.” These have various effects in Sass, detailed below. See also control directives and mixin directives.
+\subsection{@import}
+
+
+ Sass extends the CSS @import rule to allow it to import SCSS and Sass files. All imported SCSS and Sass files will be merged together into a single CSS output file. In addition, any variables or mixins defined in imported files can be used in the main file.
+
+
+ Sass looks for other Sass files in the current directory, and the Sass file directory under Rack, Rails, or Merb. Additional search directories may be specified using the :load\_paths option, or the --load-path option on the command line.
+
+
+ @import takes a filename to import. By default, it looks for a Sass file to import directly, but there are a few circumstances under which it will compile to a CSS @import rule:
+\begin{itemize}
+\item If the file’s extension is .css.
+\item If the filename begins with \url{http://}.
+\item If the filename is a url().
+\item If the @import has any media queries.
+
+\end{itemize}
+
+
+ If none of the above conditions are met and the extension is .scss or .sass, then the named Sass or SCSS file will be imported. If there is no extension, Sass will try to find a file with that name and the .scss or .sass extension and import it.
+
+
+ For example,
+\begin{verbatim}
+@import "foo.scss";
+\end{verbatim}
+
+
+ or
+\begin{verbatim}
+@import "foo";
+\end{verbatim}
+
+
+ would both import the file foo.scss, whereas
+\begin{verbatim}
+@import "foo.css";
+@import "foo" screen;
+@import "\url{http://foo.com/bar}";
+@import url(foo);
+\end{verbatim}
+
+
+ would all compile to
+\begin{verbatim}
+@import "foo.css";
+@import "foo" screen;
+@import "\url{http://foo.com/bar}";
+@import url(foo);
+\end{verbatim}
+
+
+ It’s also possible to import multiple files in one @import. For example:
+\begin{verbatim}
+@import "rounded-corners", "text-shadow";
+\end{verbatim}
+
+
+ would import both the rounded-corners and the text-shadow files.
+
+
+ Imports may contain \#\{\} interpolation, but only with certain restrictions. It’s not possible to dynamically import a Sass file based on a variable; interpolation is only for CSS imports. As such, it only works with url() imports. For example:
+\begin{verbatim}
+$family: unquote("Droid+Sans");
+@import url("\url{http://fonts.googleapis.com/css?family=#}{$family}");
+\end{verbatim}
+
+
+ would compile to
+\begin{verbatim}
+@import url("\url{http://fonts.googleapis.com/css?family=Droid+Sans}");
+\end{verbatim}
+\subsubsection{Partials}
+
+
+ If you have a SCSS or Sass file that you want to import but don’t want to compile to a CSS file, you can add an underscore to the beginning of the filename. This will tell Sass not to compile it to a normal CSS file. You can then import these files without using the underscore.
+
+
+ For example, you might have \_colors.scss. Then no \_colors.css file would be created, and you can do
+\begin{verbatim}
+@import "colors";
+\end{verbatim}
+
+
+ and \_colors.scss would be imported.
+
+
+ Note that you may not include a partial and a non-partial with the same name in the same directory. For example, \_colors.scss may not exist alongside colors.scss.
+\subsubsection{Nested @import}
+
+
+ Although most of the time it’s most useful to just have @imports at the top level of the document, it is possible to include them within CSS rules and @media rules. Like a base-level @import, this includes the contents of the @imported file. However, the imported rules will be nested in the same place as the original @import.
+
+
+ For example, if example.scss contains
+\begin{verbatim}
+.example {
+  color: red;
+}
+\end{verbatim}
+
+
+ then
+\begin{verbatim}
+#main {
+  @import "example";
+}
+\end{verbatim}
+
+
+ would compile to
+\begin{verbatim}
+#main .example {
+  color: red;
+}
+\end{verbatim}
+
+
+ Directives that are only allowed at the base level of a document, like @mixin or @charset, are not allowed in files that are @imported in a nested context.
+
+
+ It’s not possible to nest @import within mixins or control directives.
+\subsection{@media}
+
+
+ @media directives in Sass behave just like they do in plain CSS, with one extra capability: they can be nested in CSS rules. If a @media directive appears within a CSS rule, it will be bubbled up to the top level of the stylesheet, putting all the selectors on the way inside the rule. This makes it easy to add media-specific styles without having to repeat selectors or break the flow of the stylesheet. For example:
+\begin{verbatim}
+.sidebar {
+  width: 300px;
+  @media screen and (orientation: landscape) {
+    width: 500px;
+  }
+}
+\end{verbatim}
+
+
+ is compiled to:
+\begin{verbatim}
+.sidebar {
+  width: 300px; }
+  @media screen and (orientation: landscape) {
+    .sidebar {
+      width: 500px; } }
+\end{verbatim}
+
+
+ @media queries can also be nested within one another. The queries will then be combined using the and operator. For example:
+\begin{verbatim}
+@media screen {
+  .sidebar {
+    @media (orientation: landscape) {
+      width: 500px;
+    }
+  }
+}
+\end{verbatim}
+
+
+ is compiled to:
+\begin{verbatim}
+@media screen and (orientation: landscape) {
+  .sidebar {
+    width: 500px; } }
+\end{verbatim}
+
+
+ Finally, @media queries can contain SassScript expressions (including variables, functions, and operators) in place of the feature names and feature values. For example:
+\begin{verbatim}
+$media: screen;
+$feature: -webkit-min-device-pixel-ratio;
+$value: 1.5;
+
+@media #{$media} and ($feature: $value) {
+  .sidebar {
+    width: 500px;
+  }
+}
+\end{verbatim}
+
+
+ is compiled to:
+\begin{verbatim}
+@media screen and (-webkit-min-device-pixel-ratio: 1.5) {
+  .sidebar {
+    width: 500px; } }
+\end{verbatim}
+\subsection{@extend}
+
+
+ There are often cases when designing a page when one class should have all the styles of another class, as well as its own specific styles. The most common way of handling this is to use both the more general class and the more specific class in the HTML. For example, suppose we have a design for a normal error and also for a serious error. We might write our markup like so:
+\begin{verbatim}
+<div class="error seriousError">
+  Oh no! You've been hacked!
+</div>
+\end{verbatim}
+
+
+ And our styles like so:
+\begin{verbatim}
+.error {
+  border: 1px #f00;
+  background-color: #fdd;
+}
+.seriousError {
+  border-width: 3px;
+}
+\end{verbatim}
+
+
+ Unfortunately, this means that we have to always remember to use .error with .seriousError. This is a maintenance burden, leads to tricky bugs, and can bring non-semantic style concerns into the markup.
+
+
+ The @extend directive avoids these problems by telling Sass that one selector should inherit the styles of another selector. For example:
+\begin{verbatim}
+.error {
+  border: 1px #f00;
+  background-color: #fdd;
+}
+.seriousError {
+  @extend .error;
+  border-width: 3px;
+}
+\end{verbatim}
+
+
+ This means that all styles defined for .error are also applied to .seriousError, in addition to the styles specific to .seriousError. In effect, everything with class .seriousError also has class .error.
+
+
+ Other rules that use .error will work for .seriousError as well. For example, if we have special styles for errors caused by hackers:
+\begin{verbatim}
+.error.intrusion {
+  background-image: url("/image/hacked.png");
+}
+\end{verbatim}
+
+
+ Then $<$div class=''seriousError intrusion''$>$ will have the hacked.png background image as well.
+\subsubsection{How it Works}
+
+
+ @extend works by inserting the extending selector (e.g. .seriousError) anywhere in the stylesheet that the extended selector (.e.g .error) appears. Thus the example above:
+\begin{verbatim}
+.error {
+  border: 1px #f00;
+  background-color: #fdd;
+}
+.error.intrusion {
+  background-image: url("/image/hacked.png");
+}
+.seriousError {
+  @extend .error;
+  border-width: 3px;
+}
+\end{verbatim}
+
+
+ is compiled to:
+\begin{verbatim}
+.error, .seriousError {
+  border: 1px #f00;
+  background-color: #fdd; }
+
+.error.intrusion, .seriousError.intrusion {
+  background-image: url("/image/hacked.png"); }
+
+.seriousError {
+  border-width: 3px; }
+\end{verbatim}
+
+
+ When merging selectors, @extend is smart enough to avoid unnecessary duplication, so something like .seriousError.seriousError gets translated to .seriousError. In addition, it won’t produce selectors that can’t match anything, like \#main\#footer.
+\subsubsection{Extending Complex Selectors}
+
+
+ Class selectors aren’t the only things that can be extended. It’s possible to extend any selector involving only a single element, such as .special.cool, a:hover, or a.user[href\^{}=''\url{http://}'']. For example:
+\begin{verbatim}
+.hoverlink {
+  @extend a:hover;
+}
+\end{verbatim}
+
+
+ Just like with classes, this means that all styles defined for a:hover are also applied to .hoverlink. For example:
+\begin{verbatim}
+.hoverlink {
+  @extend a:hover;
+}
+a:hover {
+  text-decoration: underline;
+}
+\end{verbatim}
+
+
+ is compiled to:
+\begin{verbatim}
+a:hover, .hoverlink {
+  text-decoration: underline; }
+\end{verbatim}
+
+
+ Just like with .error.intrusion above, any rule that uses a:hover will also work for .hoverlink, even if they have other selectors as well. For example:
+\begin{verbatim}
+.hoverlink {
+  @extend a:hover;
+}
+.comment a.user:hover {
+  font-weight: bold;
+}
+\end{verbatim}
+
+
+ is compiled to:
+\begin{verbatim}
+.comment a.user:hover, .comment .user.hoverlink {
+  font-weight: bold; }
+\end{verbatim}
+\subsubsection{Multiple Extends}
+
+
+ A single selector can extend more than one selector. This means that it inherits the styles of all the extended selectors. For example:
+\begin{verbatim}
+.error {
+  border: 1px #f00;
+  background-color: #fdd;
+}
+.attention {
+  font-size: 3em;
+  background-color: #ff0;
+}
+.seriousError {
+  @extend .error;
+  @extend .attention;
+  border-width: 3px;
+}
+\end{verbatim}
+
+
+ is compiled to:
+\begin{verbatim}
+.error, .seriousError {
+  border: 1px #f00;
+  background-color: #fdd; }
+
+.attention, .seriousError {
+  font-size: 3em;
+  background-color: #ff0; }
+
+.seriousError {
+  border-width: 3px; }
+\end{verbatim}
+
+
+ In effect, everything with class .seriousError also has class .error \emph{and}
+ class .attention. Thus, the styles defined later in the document take precedence: .seriousError has background color \#ff0 rather than \#fdd, since .attention is defined later than .error.
+
+
+ Multiple extends can also be written using a comma-separated list of selectors. For example, @extend .error, .attention is the same as @extend .error; @extend.attention.
+\subsubsection{Chaining Extends}
+
+
+ It’s possible for one selector to extend another selector that in turn extends a third. For example:
+\begin{verbatim}
+.error {
+  border: 1px #f00;
+  background-color: #fdd;
+}
+.seriousError {
+  @extend .error;
+  border-width: 3px;
+}
+.criticalError {
+  @extend .seriousError;
+  position: fixed;
+  top: 10%;
+  bottom: 10%;
+  left: 10%;
+  right: 10%;
+}
+\end{verbatim}
+
+
+ Now everything with class .seriousError also has class .error, and everything with class .criticalError has class .seriousError \emph{and}
+ class .error. It’s compiled to:
+\begin{verbatim}
+.error, .seriousError, .criticalError {
+  border: 1px #f00;
+  background-color: #fdd; }
+
+.seriousError, .criticalError {
+  border-width: 3px; }
+
+.criticalError {
+  position: fixed;
+  top: 10%;
+  bottom: 10%;
+  left: 10%;
+  right: 10%; }
+\end{verbatim}
+\subsubsection{Selector Sequences}
+
+
+ Selector sequences, such as .foo .bar or .foo + .bar, currently can’t be extended. However, it is possible for nested selectors themselves to use @extend. For example:
+\begin{verbatim}
+#fake-links .link {
+  @extend a;
+}
+
+a {
+  color: blue;
+  &:hover {
+    text-decoration: underline;
+  }
+}
+\end{verbatim}
+
+
+ is compiled to
+\begin{verbatim}
+a, #fake-links .link {
+  color: blue; }
+  a:hover, #fake-links .link:hover {
+    text-decoration: underline; }
+\end{verbatim}
+\textbf{Merging Selector Sequences}
+
+
+ Sometimes a selector sequence extends another selector that appears in another sequence. In this case, the two sequences need to be merged. For example:
+\begin{verbatim}
+#admin .tabbar a {
+  font-weight: bold;
+}
+#demo .overview .fakelink {
+  @extend a;
+}
+\end{verbatim}
+
+
+ While it would technically be possible to generate all selectors that could possibly match either sequence, this would make the stylesheet far too large. The simple example above, for instance, would require ten selectors. Instead, Sass generates only selectors that are likely to be useful.
+
+
+ When the two sequences being merged have no selectors in common, then two new selectors are generated: one with the first sequence before the second, and one with the second sequence before the first. For example:
+\begin{verbatim}
+#admin .tabbar a {
+  font-weight: bold;
+}
+#demo .overview .fakelink {
+  @extend a;
+}
+\end{verbatim}
+
+
+ is compiled to:
+\begin{verbatim}
+#admin .tabbar a,
+#admin .tabbar #demo .overview .fakelink,
+#demo .overview #admin .tabbar .fakelink {
+  font-weight: bold; }
+\end{verbatim}
+
+
+ If the two sequences do share some selectors, then those selectors will be merged together and only the differences (if any still exist) will alternate. In this example, both sequences contain the id \#admin, so the resulting selectors will merge those two ids:
+\begin{verbatim}
+#admin .tabbar a {
+  font-weight: bold;
+}
+#admin .overview .fakelink {
+  @extend a;
+}
+\end{verbatim}
+
+
+ This is compiled to:
+\begin{verbatim}
+#admin .tabbar a,
+#admin .tabbar .overview .fakelink,
+#admin .overview .tabbar .fakelink {
+  font-weight: bold; }
+\end{verbatim}
+\subsubsection{@extend-Only Selectors}
+
+
+ Sometimes you’ll write styles for a class that you only ever want to @extend, and never want to use directly in your HTML. This is especially true when writing a Sass library, where you may provide styles for users to @extend if they need and ignore if they don’t.
+
+
+ If you use normal classes for this, you end up creating a lot of extra CSS when the stylesheets are generated, and run the risk of colliding with other classes that are being used in the HTML. That’s why Sass supports “placeholder selectors” (for example, \%foo).
+
+
+ Placeholder selectors look like class and id selectors, except the \# or . is replaced by \%. They can be used anywhere a class or id could, and on their own they prevent rulesets from being rendered to CSS. For example:
+\begin{verbatim}
+// This ruleset won't be rendered on its own.
+#context a%extreme {
+  color: blue;
+  font-weight: bold;
+  font-size: 2em;
+}
+\end{verbatim}
+
+
+ However, placeholder selectors can be extended, just like classes and ids. The extended selectors will be generated, but the base placeholder selector will not. For example:
+\begin{verbatim}
+.notice {
+  @extend %extreme;
+}
+\end{verbatim}
+
+
+ Is compiled to:
+\begin{verbatim}
+#context a.notice {
+  color: blue;
+  font-weight: bold;
+  font-size: 2em; }
+\end{verbatim}
+\subsubsection{The !optional Flag}
+
+
+ Normally when you extend a selector, it’s an error if that @extend doesn’t work. For example, if you write a.important \{@extend .notice\}, it’s an error if there are no selectors that contain .notice. It’s also an error if the only selector containing .notice is h1.notice, since h1 conflicts with a and so no new selector would be generated.
+
+
+ Sometimes, though, you want to allow an @extend not to produce any new selectors. To do so, just add the !optional flag after the selector. For example:
+\begin{verbatim}
+a.important {
+  @extend .notice !optional;
+}
+\end{verbatim}
+\subsubsection{@extend in Directives}
+
+
+ There are some restrictions on the use of @extend within directives such as @media. Sass is unable to make CSS rules outside of the @media block apply to selectors inside it without creating a huge amount of stylesheet bloat by copying styles all over the place. This means that if you use @extend within @media (or other CSS directives), you may only extend selectors that appear within the same directive block.
+
+
+ For example, the following works fine:
+\begin{verbatim}
+@media print {
+  .error {
+    border: 1px #f00;
+    background-color: #fdd;
+  }
+  .seriousError {
+    @extend .error;
+    border-width: 3px;
+  }
+}
+\end{verbatim}
+
+
+ But this is an error:
+\begin{verbatim}
+.error {
+  border: 1px #f00;
+  background-color: #fdd;
+}
+
+@media print {
+  .seriousError {
+    // INVALID EXTEND: .error is used outside of the "@media print" directive
+    @extend .error;
+    border-width: 3px;
+  }
+}
+\end{verbatim}
+
+
+ Someday we hope to have @extend supported natively in the browser, which will allow it to be used within @media and other directives.
+\subsection{@debug}
+
+
+ The @debug directive prints the value of a SassScript expression to the standard error output stream. It’s useful for debugging Sass files that have complicated SassScript going on. For example:
+\begin{verbatim}
+@debug 10em + 12em;
+\end{verbatim}
+
+
+ outputs:
+\begin{verbatim}
+Line 1 DEBUG: 22em
+\end{verbatim}
+\subsection{@warn}
+
+
+ The @warn directive prints the value of a SassScript expression to the standard error output stream. It’s useful for libraries that need to warn users of deprecations or recovering from minor mixin usage mistakes. There are two major distinctions between @warn and @debug:
+\begin{enumerate}
+\item You can turn warnings off with the --quiet command-line option or the :quiet Sass option.
+\item A stylesheet trace will be printed out along with the message so that the user being warned can see where their styles caused the warning.
+
+\end{enumerate}
+
+
+ Usage Example:
+\begin{verbatim}
+@mixin adjust-location($x, $y) {
+  @if unitless($x) {
+    @warn "Assuming #{$x} to be in pixels";
+    $x: 1px * $x;
+  }
+  @if unitless($y) {
+    @warn "Assuming #{$y} to be in pixels";
+    $y: 1px * $y;
+  }
+  position: relative; left: $x; top: $y;
+}
+\end{verbatim}
+\section{Control Directives}
+
+
+ SassScript supports basic control directives for including styles only under some conditions or including the same style several times with variations.
+
+
+ \textbf{Note that control directives are an advanced feature, and are not recommended in the course of day-to-day styling}
+. They exist mainly for use in mixins, particularly those that are part of libraries like Compass, and so require substantial flexibility.
+\subsection{@if}
+
+
+ The @if directive takes a SassScript expression and uses the styles nested beneath it if the expression returns anything other than false or null:
+\begin{verbatim}
+p {
+  @if 1 + 1 == 2 { border: 1px solid;  }
+  @if 5 < 3      { border: 2px dotted; }
+  @if null       { border: 3px double; }
+}
+\end{verbatim}
+
+
+ is compiled to:
+\begin{verbatim}
+p {
+  border: 1px solid; }
+\end{verbatim}
+
+
+ The @if statement can be followed by several @else if statements and one @else statement. If the @if statement fails, the @else if statements are tried in order until one succeeds or the @else is reached. For example:
+\begin{verbatim}
+$type: monster;
+p {
+  @if $type == ocean {
+    color: blue;
+  } @else if $type == matador {
+    color: red;
+  } @else if $type == monster {
+    color: green;
+  } @else {
+    color: black;
+  }
+}
+\end{verbatim}
+
+
+ is compiled to:
+\begin{verbatim}
+p {
+  color: green; }
+\end{verbatim}
+\subsection{@for}
+
+
+ The @for directive repeatedly outputs a set of styles. For each repetition, a counter variable is used to adjust the output. The directive has two forms: @for \$var from $<$start$>$ through $<$end$>$ and @for \$var from $<$start$>$ to $<$end$>$. Note the difference in the keywords through and to. \$var can be any variable name, like \$i; $<$start$>$ and $<$end$>$ are SassScript expressions that should return integers.
+
+
+ The @for statement sets \$var to each successive number in the specified range and each time outputs the nested styles using that value of \$var. For the form from ... through, the range \emph{includes}
+ the values of $<$start$>$ and $<$end$>$, but the form from ... to runs up to \emph{but not including}
+ the value of $<$end$>$. Using the through syntax,
+\begin{verbatim}
+@for $i from 1 through 3 {
+  .item-#{$i} { width: 2em * $i; }
+}
+\end{verbatim}
+
+
+ is compiled to:
+\begin{verbatim}
+.item-1 {
+  width: 2em; }
+.item-2 {
+  width: 4em; }
+.item-3 {
+  width: 6em; }
+\end{verbatim}
+\subsection{@each}
+
+
+ The @each rule has the form @each \$var in $<$list$>$. \$var can be any variable name, like \$length or \$name, and $<$list$>$ is a SassScript expression that returns a list.
+
+
+ The @each rule sets \$var to each item in the list, then outputs the styles it contains using that value of \$var. For example:
+\begin{verbatim}
+@each $animal in puma, sea-slug, egret, salamander {
+  .#{$animal}-icon {
+    background-image: url('/images/#{$animal}.png');
+  }
+}
+\end{verbatim}
+
+
+ is compiled to:
+\begin{verbatim}
+.puma-icon {
+  background-image: url('/images/puma.png'); }
+.sea-slug-icon {
+  background-image: url('/images/sea-slug.png'); }
+.egret-icon {
+  background-image: url('/images/egret.png'); }
+.salamander-icon {
+  background-image: url('/images/salamander.png'); }
+\end{verbatim}
+\subsection{@while}
+
+
+ The @while directive takes a SassScript expression and repeatedly outputs the nested styles until the statement evaluates to false. This can be used to achieve more complex looping than the @for statement is capable of, although this is rarely necessary. For example:
+\begin{verbatim}
+$i: 6;
+@while $i > 0 {
+  .item-#{$i} { width: 2em * $i; }
+  $i: $i - 2;
+}
+\end{verbatim}
+
+
+ is compiled to:
+\begin{verbatim}
+.item-6 {
+  width: 12em; }
+
+.item-4 {
+  width: 8em; }
+
+.item-2 {
+  width: 4em; }
+\end{verbatim}
+\section{Mixin Directives}
+
+
+ Mixins allow you to define styles that can be re-used throughout the stylesheet without needing to resort to non-semantic classes like .float-left. Mixins can also contain full CSS rules, and anything else allowed elsewhere in a Sass document. They can even take arguments which allows you to produce a wide variety of styles with very few mixins.
+\subsection{Defining a Mixin: @mixin}
+
+
+ Mixins are defined with the @mixin directive. It’s followed by the name of the mixin and optionally the arguments, and a block containing the contents of the mixin. For example, the large-text mixin is defined as follows:
+\begin{verbatim}
+@mixin large-text {
+  font: {
+    family: Arial;
+    size: 20px;
+    weight: bold;
+  }
+  color: #ff0000;
+}
+\end{verbatim}
+
+
+ Mixins may also contain selectors, possibly mixed with properties. The selectors can even contain parent references. For example:
+\begin{verbatim}
+@mixin clearfix {
+  display: inline-block;
+  &:after {
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+  }
+  * html & { height: 1px }
+}
+\end{verbatim}
+\subsection{Including a Mixin: @include}
+
+
+ Mixins are included in the document with the @include directive. This takes the name of a mixin and optionally arguments to pass to it, and includes the styles defined by that mixin into the current rule. For example:
+\begin{verbatim}
+.page-title {
+  @include large-text;
+  padding: 4px;
+  margin-top: 10px;
+}
+\end{verbatim}
+
+
+ is compiled to:
+\begin{verbatim}
+.page-title {
+  font-family: Arial;
+  font-size: 20px;
+  font-weight: bold;
+  color: #ff0000;
+  padding: 4px;
+  margin-top: 10px; }
+\end{verbatim}
+
+
+ Mixins may also be included outside of any rule (that is, at the root of the document) as long as they don’t directly define any properties or use any parent references. For example:
+\begin{verbatim}
+@mixin silly-links {
+  a {
+    color: blue;
+    background-color: red;
+  }
+}
+
+@include silly-links;
+\end{verbatim}
+
+
+ is compiled to:
+\begin{verbatim}
+a {
+  color: blue;
+  background-color: red; }
+\end{verbatim}
+
+
+ Mixin definitions can also include other mixins. For example:
+\begin{verbatim}
+@mixin compound {
+  @include highlighted-background;
+  @include header-text;
+}
+
+@mixin highlighted-background { background-color: #fc0; }
+@mixin header-text { font-size: 20px; }
+\end{verbatim}
+
+
+ Mixins that only define descendent selectors, can be safely mixed into the top most level of a document.
+\subsection{Arguments}
+
+
+ Mixins can take arguments SassScript values as arguments, which are given when the mixin is included and made available within the mixin as variables.
+
+
+ When defining a mixin, the arguments are written as variable names separated by commas, all in parentheses after the name. Then when including the mixin, values can be passed in in the same manner. For example:
+\begin{verbatim}
+@mixin sexy-border($color, $width) {
+  border: {
+    color: $color;
+    width: $width;
+    style: dashed;
+  }
+}
+
+p { @include sexy-border(blue, 1in); }
+\end{verbatim}
+
+
+ is compiled to:
+\begin{verbatim}
+p {
+  border-color: blue;
+  border-width: 1in;
+  border-style: dashed; }
+\end{verbatim}
+
+
+ Mixins can also specify default values for their arguments using the normal variable-setting syntax. Then when the mixin is included, if it doesn’t pass in that argument, the default value will be used instead. For example:
+\begin{verbatim}
+@mixin sexy-border($color, $width: 1in) {
+  border: {
+    color: $color;
+    width: $width;
+    style: dashed;
+  }
+}
+p { @include sexy-border(blue); }
+h1 { @include sexy-border(blue, 2in); }
+\end{verbatim}
+
+
+ is compiled to:
+\begin{verbatim}
+p {
+  border-color: blue;
+  border-width: 1in;
+  border-style: dashed; }
+
+h1 {
+  border-color: blue;
+  border-width: 2in;
+  border-style: dashed; }
+\end{verbatim}
+\subsubsection{Keyword Arguments}
+
+
+ Mixins can also be included using explicit keyword arguments. For instance, we the above example could be written as:
+\begin{verbatim}
+p { @include sexy-border($color: blue); }
+h1 { @include sexy-border($color: blue, $width: 2in); }
+\end{verbatim}
+
+
+ While this is less concise, it can make the stylesheet easier to read. It also allows functions to present more flexible interfaces, providing many arguments without becoming difficult to call.
+
+
+ Named arguments can be passed in any order, and arguments with default values can be omitted. Since the named arguments are variable names, underscores and dashes can be used interchangeably.
+\subsubsection{Variable Arguments}
+
+
+ Sometimes it makes sense for a mixin to take an unknown number of arguments. For example, a mixin for creating box shadows might take any number of shadows as arguments. For these situations, Sass supports “variable arguments,” which are arguments at the end of a mixin declaration that take all leftover arguments and package them up as a list. These arguments look just like normal arguments, but are followed by .... For example:
+\begin{verbatim}
+@mixin box-shadow($shadows...) {
+  -moz-box-shadow: $shadows;
+  -webkit-box-shadow: $shadows;
+  box-shadow: $shadows;
+}
+
+.shadows {
+  @include box-shadow(0px 4px 5px #666, 2px 6px 10px #999);
+}
+\end{verbatim}
+
+
+ is compiled to:
+\begin{verbatim}
+.shadowed {
+  -moz-box-shadow: 0px 4px 5px #666, 2px 6px 10px #999;
+  -webkit-box-shadow: 0px 4px 5px #666, 2px 6px 10px #999;
+  box-shadow: 0px 4px 5px #666, 2px 6px 10px #999;
+}
+\end{verbatim}
+
+
+ Variable arguments can also be used when calling a mixin. Using the same syntax, you can expand a list of values so that each value is passed as a separate argument. For example:
+\begin{verbatim}
+@mixin colors($text, $background, $border) {
+  color: $text;
+  background-color: $background;
+  border-color: $border;
+}
+
+$values: #ff0000, #00ff00, #0000ff;
+.primary {
+  @include colors($values...);
+}
+\end{verbatim}
+
+
+ is compiled to:
+\begin{verbatim}
+.primary {
+  color: #ff0000;
+  background-color: #00ff00;
+  border-color: #0000ff;
+}
+\end{verbatim}
+
+
+ You can use variable arguments to wrap a mixin and add additional styles without changing the argument signature of the mixin. If you do so, even keyword arguments will get passed through to the wrapped mixin. For example:
+\begin{verbatim}
+@mixin wrapped-stylish-mixin($args...) {
+  font-weight: bold;
+  @include stylish-mixin($args...);
+}
+
+.stylish {
+  // The $width argument will get passed on to "stylish-mixin" as a keyword
+  @include wrapped-stylish-mixin(#00ff00, $width: 100px);
+}
+\end{verbatim}
+\subsection{Passing Content Blocks to a Mixin}
+
+
+ It is possible to pass a block of styles to the mixin for placement within the styles included by the mixin. The styles will appear at the location of any @content directives found within the mixin. This makes is possible to define abstractions relating to the construction of selectors and directives.
+
+
+ For example:
+\begin{verbatim}
+@mixin apply-to-ie6-only {
+  * html {
+    @content;
+  }
+}
+@include apply-to-ie6-only {
+  #logo {
+    background-image: url(/logo.gif);
+  }
+}
+\end{verbatim}
+
+
+ Generates:
+\begin{verbatim}
+* html #logo {
+  background-image: url(/logo.gif);
+}
+\end{verbatim}
+
+
+ The same mixins can be done in the .sass shorthand syntax:
+\begin{verbatim}
+=apply-to-ie6-only
+  * html
+    @content
+
++apply-to-ie6-only
+  #logo
+    background-image: url(/logo.gif)
+\end{verbatim}
+
+
+ \textbf{Note:}
+ when the @content directive is specified more than once or in a loop, the style block will be duplicated with each invocation.
+\subsubsection{Variable Scope and Content Blocks}
+
+
+ The block of content passed to a mixin are evaluated in the scope where the block is defined, not in the scope of the mixin. This means that variables local to the mixin \textbf{cannot}
+ be used within the passed style block and variables will resolve to the global value:
+\begin{verbatim}
+$color: white;
+@mixin colors($color: blue) {
+  background-color: $color;
+  @content;
+  border-color: $color;
+}
+.colors {
+  @include colors { color: $color; }
+}
+\end{verbatim}
+
+
+ Compiles to:
+\begin{verbatim}
+.colors {
+  background-color: blue;
+  color: white;
+  border-color: blue;
+}
+\end{verbatim}
+
+
+ Additionally, this makes it clear that the variables and mixins that are used within the passed block are related to the other styles around where the block is defined. For example:
+\begin{verbatim}
+#sidebar {
+  $sidebar-width: 300px;
+  width: $sidebar-width;
+  @include smartphone {
+    width: $sidebar-width / 3;
+  }
+}
+\end{verbatim}
+\section{Function Directives}
+
+
+ It is possible to define your own functions in sass and use them in any value or script context. For example:
+\begin{verbatim}
+$grid-width: 40px;
+$gutter-width: 10px;
+
+@function grid-width($n) {
+  @return $n * $grid-width + ($n - 1) * $gutter-width;
+}
+
+#sidebar { width: grid-width(5); }
+\end{verbatim}
+
+
+ Becomes:
+\begin{verbatim}
+#sidebar {
+  width: 240px; }
+\end{verbatim}
+
+
+ As you can see functions can access any globally defined variables as well as accept arguments just like a mixin. A function may have several statements contained within it, and you must call @return to set the return value of the function.
+
+
+ As with mixins, you can call Sass-defined functions using keyword arguments. In the above example we could have called the function like this:
+\begin{verbatim}
+#sidebar { width: grid-width($n: 5); }
+\end{verbatim}
+
+
+ It is recommended that you prefix your functions to avoid naming conflicts and so that readers of your stylesheets know they are not part of Sass or CSS. For example, if you work for ACME Corp, you might have named the function above -acme-grid-width.
+
+
+ User-defined functions also support variable arguments in the same way as mixins.
+\section{Output Style}
+
+
+ Although the default CSS style that Sass outputs is very nice and reflects the structure of the document, tastes and needs vary and so Sass supports several other styles.
+
+
+ Sass allows you to choose between four different output styles by setting the :style option or using the --style command-line flag.
+\subsection{:nested}
+
+
+ Nested style is the default Sass style, because it reflects the structure of the CSS styles and the HTML document they’re styling. Each property has its own line, but the indentation isn’t constant. Each rule is indented based on how deeply it’s nested. For example:
+\begin{verbatim}
+#main {
+  color: #fff;
+  background-color: #000; }
+  #main p {
+    width: 10em; }
+
+.huge {
+  font-size: 10em;
+  font-weight: bold;
+  text-decoration: underline; }
+\end{verbatim}
+
+
+ Nested style is very useful when looking at large CSS files: it allows you to easily grasp the structure of the file without actually reading anything.
+\subsection{:expanded}
+
+
+ Expanded is a more typical human-made CSS style, with each property and rule taking up one line. Properties are indented within the rules, but the rules aren’t indented in any special way. For example:
+\begin{verbatim}
+#main {
+  color: #fff;
+  background-color: #000;
+}
+#main p {
+  width: 10em;
+}
+
+.huge {
+  font-size: 10em;
+  font-weight: bold;
+  text-decoration: underline;
+}
+\end{verbatim}
+\subsection{:compact}
+
+
+ Compact style takes up less space than Nested or Expanded. It also draws the focus more to the selectors than to their properties. Each CSS rule takes up only one line, with every property defined on that line. Nested rules are placed next to each other with no newline, while separate groups of rules have newlines between them. For example:
+\begin{verbatim}
+#main { color: #fff; background-color: #000; }
+#main p { width: 10em; }
+
+.huge { font-size: 10em; font-weight: bold; text-decoration: underline; }
+\end{verbatim}
+\subsection{:compressed}
+
+
+ Compressed style takes up the minimum amount of space possible, having no whitespace except that necessary to separate selectors and a newline at the end of the file. It also includes some other minor compressions, such as choosing the smallest representation for colors. It’s not meant to be human-readable. For example:
+\begin{verbatim}
+#main{color:#fff;background-color:#000}#main p{width:10em}.huge{font-size:10em;font-weight:bold;text-decoration:underline}
+\end{verbatim}
+\section{Extending Sass}
+
+
+ Sass provides a number of advanced customizations for users with unique requirements. Using these features requires a strong understanding of Ruby.
+\subsection{Defining Custom Sass Functions}
+
+
+ Users can define their own Sass functions using the Ruby API. For more information, see the source documentation.
+\subsection{Cache Stores}
+
+
+ Sass caches parsed documents so that they can be reused without parsing them again unless they have changed. By default, Sass will write these cache files to a location on the filesystem indicated by :cache\_location. If you cannot write to the filesystem or need to share cache across ruby processes or machines, then you can define your own cache store and set the:cache\_store option. For details on creating your own cache store, please see the source documentation.
+\subsection{Custom Importers}
+
+
+ Sass importers are in charge of taking paths passed to @import and finding the appropriate Sass code for those paths. By default, this code is loaded from the filesystem, but importers could be added to load from a database, over HTTP, or use a different file naming scheme than what Sass expects.
+
+
+ Each importer is in charge of a single load path (or whatever the corresponding notion is for the backend). Importers can be placed in the :load\_paths array alongside normal filesystem paths.
+
+
+ When resolving an @import, Sass will go through the load paths looking for an importer that successfully imports the path. Once one is found, the imported file is used.
+
+
+ User-created importers must inherit from Sass::Importers::Base.
+ Generated on Fri Mar 22 19:18:16 2013 by yard 0.5.3 (ruby-1.8.7). 
+\end{document}
